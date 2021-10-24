@@ -23,6 +23,7 @@ struct screen *prepare_screen(VOID)
 		&(scr->columns),
 		&(scr->lines)
 	);
+	scr->attr = gST->ConOut->Mode->Attribute;
 
 	return scr;
 }

@@ -9,6 +9,7 @@ struct screen
 	EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *stdout;
 	EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *stderr;
 	UINTN columns, lines; // current screen size
+	INT32 attr; // main screen attributes
 };
 
 /*
