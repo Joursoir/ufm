@@ -1,6 +1,11 @@
 #ifndef UFM_TBI_SCREEN_H
 #define UFM_TBI_SCREEN_H
 
+/*
+	EDK2 NOTE: All devices that support the Simple Text Output Protocol must
+	minimally support an 80x25 character mode. Additional modes are optional
+*/
+
 #include <Uefi.h>
 
 struct screen
