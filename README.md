@@ -9,6 +9,6 @@ TODO
 ## Organization of code:
 
 * lib: code of auxiliary routines
-	* interface: responsible for pseudo-graphics
+	* tbi: responsible for pseudo-graphics (text-based interface)
 
 * scr: the application's main code
