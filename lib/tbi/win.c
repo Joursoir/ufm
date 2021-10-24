@@ -88,3 +88,17 @@ VOID delwin(struct window *w)
 
 	FreePool(w);
 }
+
+VOID wattrset(struct window *w, INT32 attr)
+{
+	ASSERT(w != NULL);
+
+	w->cur_attr = attr;
+}
+
+VOID wattroff(struct window *w)
+{
+	ASSERT(w != NULL);
+
+	w->cur_attr = w->scr->attr;
+}

@@ -54,4 +54,24 @@ struct window *newwin(struct screen *s,
 */
 VOID delwin(struct window *w);
 
+/*
+ * Sets the current attributes of the given window
+ *
+ * w: the window on which to operate
+ * attr: the attributes
+ *
+ * return: VOID
+*/
+VOID wattrset(struct window *w, INT32 attr);
+
+/*
+ * Resets the current attributes of the given window to standard screen
+ * attributes
+ *
+ * w: the window on which to operate
+ *
+ * return: VOID
+*/
+VOID wattroff(struct window *w);
+
 #endif /* UFM_TBI_WINDOW_H */
