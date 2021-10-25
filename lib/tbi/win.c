@@ -11,6 +11,13 @@
 	if(x < 0 || y < 0 || x >= w->width || y >= w->height) \
 		return FALSE
 
+#define SET_WINDOW_CHAR(win, col, row, character, attrib) \
+	w->text[row][col] = character; \
+	w->attr[row][col] = attrib
+
+#define SET_WINDOW_CHAR2(win, col, row, character) \
+	SET_WINDOW_CHAR(win, col, row, character, win->cur_attr)
+
 struct window *newwin(struct screen *s, 
 	INT32 ncols, INT32 nlines, INT32 begin_x, INT32 begin_y)
 {
