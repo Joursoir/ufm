@@ -7,6 +7,10 @@
 #include "screen.h"
 #include "win.h"
 
+#define CHECK_POSITION(win, x, y) \
+	if(x < 0 || y < 0 || x >= w->width || y >= w->height) \
+		return FALSE
+
 struct window *newwin(struct screen *s, 
 	INT32 ncols, INT32 nlines, INT32 begin_x, INT32 begin_y)
 {
