@@ -106,3 +106,14 @@ VOID wattroff(struct window *w)
 
 	w->cur_attr = w->scr->attr;
 }
+
+BOOLEAN wmove(struct window *w, INT32 x, INT32 y)
+{
+	ASSERT(w != NULL);
+	CHECK_POSITION(w, x, y);
+
+	w->curx = x;
+	w->cury = y;
+	return TRUE;
+}
+

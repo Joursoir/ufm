@@ -74,4 +74,15 @@ VOID wattrset(struct window *w, INT32 attr);
 */
 VOID wattroff(struct window *w);
 
+/*
+ * Moves cursor position to specified coordinates
+ *
+ * w: the window on which to operate
+ * x: the X(column) coordinate
+ * y: the Y(row) coordinate
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN wmove(struct window *w, INT32 x, INT32 y);
+
 #endif /* UFM_TBI_WINDOW_H */
