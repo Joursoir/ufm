@@ -124,3 +124,29 @@ BOOLEAN wmove(struct window *w, INT32 x, INT32 y)
 	return TRUE;
 }
 
+BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
+	CHAR16 bs, CHAR16 tl, CHAR16 tr, CHAR16 bl, CHAR16 br)
+{
+	INT32 i, endx, endy;
+	ASSERT(w != NULL);
+
+	endx = w->width - 1;
+	endy = w->height - 1;
+
+	for(i = 0; i <= endx; i++) {
+		SET_WINDOW_CHAR2(w, i, 0, ts);
+		SET_WINDOW_CHAR2(w, i, endy, bs);
+	}
+
+	for(i = 0; i <= endy; i++) {
+		SET_WINDOW_CHAR2(w, 0, i, ls);
+		SET_WINDOW_CHAR2(w, endx, i, rs);
+	}
+
+	SET_WINDOW_CHAR2(w, 0, 0, tl);
+	SET_WINDOW_CHAR2(w, endx, 0, tr);
+	SET_WINDOW_CHAR2(w, 0, endy, bl);
+	SET_WINDOW_CHAR2(w, endx, endy, br);
+	return TRUE;
+}
+

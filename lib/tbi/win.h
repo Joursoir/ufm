@@ -85,4 +85,22 @@ VOID wattroff(struct window *w);
 */
 BOOLEAN wmove(struct window *w, INT32 x, INT32 y);
 
+/*
+ * Draws a box around the edges of a window
+ *
+ * w: the window on which to operate
+ * ls: the left side character
+ * rs: the right side character
+ * ts: the top side character
+ * bs: the bottom side character
+ * tl: the top left corner character
+ * tr: the top right corner character
+ * bl: the bottom left corner character
+ * br: the bottom right corner character
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
+	CHAR16 bs, CHAR16 tl, CHAR16 tr, CHAR16 bl, CHAR16 br);
+
 #endif /* UFM_TBI_WINDOW_H */
