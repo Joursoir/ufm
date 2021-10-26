@@ -103,4 +103,34 @@ BOOLEAN wmove(struct window *w, INT32 x, INT32 y);
 BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
 	CHAR16 bs, CHAR16 tl, CHAR16 tr, CHAR16 bl, CHAR16 br);
 
+/*
+ * Moves to specified coordinates, draws a horizontal line using ch
+ * starting at (x, y) in the window. The current cursor position is 
+ * not changed.
+ *
+ * w: the window on which to operate
+ * x: the X(column) coordinate for the start of the line
+ * y: the Y(row) coordinate for the start of the line
+ * ch: the character used to draw the line
+ * n: the maximum number of chars in the line
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
+
+/*
+ * Moves to specified coordinates, draws a vertical line using ch
+ * starting at (x, y) in the window. The current cursor position is 
+ * not changed.
+ *
+ * w: the window on which to operate
+ * x: the X(column) coordinate for the start of the line
+ * y: the Y(row) coordinate for the start of the line
+ * ch: the character used to draw the line
+ * n: the maximum number of chars in the line
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
+
 #endif /* UFM_TBI_WINDOW_H */

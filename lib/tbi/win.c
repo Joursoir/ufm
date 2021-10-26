@@ -150,3 +150,39 @@ BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
 	return TRUE;
 }
 
+BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
+{
+	UINTN i, length;
+	ASSERT(w != NULL);
+	CHECK_POSITION(w, x, y);
+
+	length = w->width - x;
+	if(length > n)
+		length = n;
+
+	length += x;
+	for(i = x; i < length; i++) {
+		w->text[y][i] = ch;
+		w->attr[y][i] = w->cur_attr;
+	}
+	return TRUE;
+}
+
+BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
+{
+	UINTN i, length;
+	ASSERT(w != NULL);
+	CHECK_POSITION(w, x, y);
+
+	length = w->height - y;
+	if(length > n)
+		length = n;
+
+	length += y;
+	for(i = y; i < length; i++) {
+		w->text[i][x] = ch;
+		w->attr[i][x] = w->cur_attr;
+	}
+	return TRUE;
+}
+
