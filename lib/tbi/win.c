@@ -2,6 +2,8 @@
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
 #include <Library/ShellLib.h>
+#include <Library/PrintLib.h> // UnicodeVSPrint()
+#include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 
 #include "screen.h"
@@ -184,5 +186,42 @@ BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
 		w->attr[i][x] = w->cur_attr;
 	}
 	return TRUE;
+}
+
+UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
+{
+	INT32 x, y;
+	UINTN i, length, max_length, walker_size;
+	CHAR16 *fmt_walker;
+
+	ASSERT(w != NULL);
+	ASSERT(fmt != NULL);
+
+	x = w->curx;
+	y = w->cury;
+
+	walker_size = w->width * sizeof(CHAR16);
+	fmt_walker = AllocateZeroPool(walker_size);
+	if(!fmt_walker)
+		return 0;
+
+	UnicodeVSPrint(fmt_walker, walker_size, fmt, args);
+	length = StrLen(fmt_walker);
+	max_length = w->width - x;
+	if(length >= max_length) {
+		length = max_length;
+
+		w->curx = 0;
+		if(++w->cury >= w->height)
+			w->cury = 0;
+	}
+	else
+		w->curx += length;
+
+	CopyMem(w->text[y] + x, fmt_walker, length * 2); // multiply by 2 because CHAR16
+	for(i = 0; i < length; i++)
+		w->attr[y][x + i] = w->cur_attr;
+	FreePool(fmt_walker);
+	return length;
 }
 

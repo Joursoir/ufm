@@ -133,4 +133,17 @@ BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
 */
 BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
 
+/*
+ * Prints output based on a null-terminated unicode format string
+   and a arguments list
+ *
+ * w: the window on which to operate
+ * fmt: a null-terminated unicode format string
+ * arg: the variable argument list
+ *
+ * return: the number of unicode chars in the produced output buffer
+           not including the null-terminator
+*/
+UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args);
+
 #endif /* UFM_TBI_WINDOW_H */
