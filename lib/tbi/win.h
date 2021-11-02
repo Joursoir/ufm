@@ -134,6 +134,34 @@ BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
 BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
 
 /*
+ * Prints formatted output on the cursor coordinates
+ *
+ * w: the window on which to operate
+ * fmt: a null-terminated unicode format string
+ * ...: variable arguments list whose contents are accessed based on the
+        fmt string specified by FormatString
+ *
+ * return: the number of unicode chars in the produced output buffer
+           not including the null-terminator
+*/
+UINTN EFIAPI wprintf(struct window *w, CONST CHAR16 *fmt, ...);
+
+/*
+ * Moves to specified coordinates, prints formatted output
+ *
+ * w: the window on which to operate
+ * x: the X(column) coordinate to move
+ * y: the Y(row) coordinate to move
+ * fmt: a null-terminated unicode format string
+ * ...: variable arguments list whose contents are accessed based on the
+        fmt string specified by FormatString
+ *
+ * return: the number of unicode chars in the produced output buffer
+           not including the null-terminator
+*/
+UINTN EFIAPI mvwprintf(struct window *w, INT32 x, INT32 y, CONST CHAR16 *fmt, ...);
+
+/*
  * Prints output based on a null-terminated unicode format string
    and a arguments list
  *

@@ -188,6 +188,33 @@ BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
 	return TRUE;
 }
 
+UINTN EFIAPI wprintf(struct window *w, CONST CHAR16 *fmt, ...)
+{
+	VA_LIST arg;
+	UINTN retval;
+
+	VA_START(arg, fmt);
+	retval = wvprintf(w, fmt, arg);
+	VA_END(arg);
+	return retval;
+}
+
+UINTN EFIAPI mvwprintf(struct window *w, INT32 x, INT32 y, CONST CHAR16 *fmt, ...)
+{
+	VA_LIST arg;
+	UINTN retval;
+	BOOLEAN moved;
+
+	moved = wmove(w, x, y);
+	if(moved == FALSE)
+		return 0;
+
+	VA_START(arg, fmt);
+	retval = wvprintf(w, fmt, arg);
+	VA_END(arg);
+	return retval;
+}
+
 UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
 {
 	INT32 x, y;
