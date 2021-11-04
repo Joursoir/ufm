@@ -174,4 +174,13 @@ UINTN EFIAPI mvwprintf(struct window *w, INT32 x, INT32 y, CONST CHAR16 *fmt, ..
 */
 UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args);
 
+/*
+ * Does the output of window to the terminal
+ *
+ * w: the window on which to operate
+ *
+ * return: VOID
+*/
+VOID wrefresh(struct window *w);
+
 #endif /* UFM_TBI_WINDOW_H */

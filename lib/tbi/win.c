@@ -252,3 +252,39 @@ UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
 	return length;
 }
 
+VOID wrefresh(struct window *w)
+{
+	UINTN x, y;
+	INT32 attributes;
+	CHAR16 tmp_ch, *print_ptr;
+	EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *stdout;
+
+	ASSERT(w != NULL);
+
+	attributes = w->attr[0][0];
+	stdout = w->scr->stdout;
+	stdout->SetAttribute(stdout, attributes);
+
+	for(y = 0; y < w->height; y++) {
+		stdout->SetCursorPosition(stdout, w->begx, w->begy + y);
+		print_ptr = w->text[y];
+
+		for(x = 0; x <= (w->width); x++) {
+			if(w->text[y][x] == CHAR_NULL || attributes != w->attr[y][x])
+			{
+				tmp_ch = w->text[y][x];
+				w->text[y][x] = CHAR_NULL;
+				stdout->OutputString(stdout, print_ptr);
+				w->text[y][x] = tmp_ch;
+
+				print_ptr = &(w->text[y][x]);
+				if(w->text[y][x] != CHAR_NULL) {
+					attributes = w->attr[y][x];
+					stdout->SetAttribute(stdout, attributes);
+				}
+			}
+		}
+	}
+
+	stdout->SetAttribute(stdout, w->scr->attr);
+}
