@@ -10,12 +10,12 @@
 #include "win.h"
 
 #define CHECK_POSITION(win, x, y) \
-	if(x < 0 || y < 0 || x >= w->width || y >= w->height) \
+	if(x < 0 || y < 0 || x >= win->width || y >= win->height) \
 		return FALSE
 
 #define SET_WINDOW_CHAR(win, col, row, character, attrib) \
-	w->text[row][col] = character; \
-	w->attr[row][col] = attrib
+	win->text[row][col] = character; \
+	win->attr[row][col] = attrib
 
 #define SET_WINDOW_CHAR2(win, col, row, character) \
 	SET_WINDOW_CHAR(win, col, row, character, win->cur_attr)
