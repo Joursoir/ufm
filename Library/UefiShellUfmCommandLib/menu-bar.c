@@ -1,7 +1,7 @@
 #include <Library/DebugLib.h>
 
-#include "lib/tbi/screen.h"
-#include "lib/tbi/win.h"
+#include "tbi/screen.h"
+#include "tbi/win.h"
 #include "menu-bar.h"
 
 struct window *menubar = NULL;
