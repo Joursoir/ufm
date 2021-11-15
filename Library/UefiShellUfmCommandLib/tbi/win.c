@@ -68,11 +68,9 @@ struct window *newwin(struct screen *s,
 		}
 
 		for(x = 0; x < ncols; x++) {
-			win->text[y][x] = L' ';
-			win->attr[y][x] = win->cur_attr;
+			SET_WINDOW_CHAR2(win, x, y, L' ');
 		}
-		win->text[y][x] = CHAR_NULL;
-		win->attr[y][x] = win->cur_attr;
+		SET_WINDOW_CHAR2(win, x, y, CHAR_NULL);
 	}
 
 	return win;
@@ -164,8 +162,7 @@ BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
 
 	length += x;
 	for(i = x; i < length; i++) {
-		w->text[y][i] = ch;
-		w->attr[y][i] = w->cur_attr;
+		SET_WINDOW_CHAR2(w, i, y, ch);
 	}
 	return TRUE;
 }
@@ -182,8 +179,7 @@ BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
 
 	length += y;
 	for(i = y; i < length; i++) {
-		w->text[i][x] = ch;
-		w->attr[i][x] = w->cur_attr;
+		SET_WINDOW_CHAR2(w, x, i, ch);
 	}
 	return TRUE;
 }
@@ -245,9 +241,9 @@ UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
 	else
 		w->curx += length;
 
-	CopyMem(w->text[y] + x, fmt_walker, length * 2); // multiply by 2 because CHAR16
-	for(i = 0; i < length; i++)
-		w->attr[y][x + i] = w->cur_attr;
+	for(i = 0; i < length; i++) {
+		SET_WINDOW_CHAR2(w, (x + i), y, *(fmt_walker + i));
+	}
 	FreePool(fmt_walker);
 	return length;
 }
