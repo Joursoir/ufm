@@ -41,4 +41,14 @@ VOID dirl_release(struct dir_list *dl);
 struct dir_list *scandir(CONST CHAR16 *search_path, CONST CHAR16 *wildcard,
     CONST UINT64 attr);
 
+/*
+ * Gets the data stored in the specified node of directory linked list
+ *
+ * dl: the pointer to the directory list
+ * n: the node number (starts with 1)
+ *
+ * return: A pointer to the EFI_SHELL_FILE_INFO or NULL if search fails
+*/
+EFI_SHELL_FILE_INFO *dirl_getn(struct dir_list *dl, UINTN n);
+
 #endif /* UFM_DIR_H */

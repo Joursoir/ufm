@@ -88,3 +88,21 @@ struct dir_list *scandir(CONST CHAR16 *search_path, CONST CHAR16 *wildcard,
 	SHELL_FREE_NON_NULL(path);
 	return list;
 }
+
+EFI_SHELL_FILE_INFO *dirl_getn(struct dir_list *dl, UINTN n)
+{
+	UINTN i = 1;
+	EFI_SHELL_FILE_INFO *list_head, *node;
+	list_head = dl->list_head;
+
+	if(n < 1 || n > dl->len)
+		return NULL;
+
+	node = (EFI_SHELL_FILE_INFO *)GetFirstNode(&list_head->Link);
+	while(!IsNull(&list_head->Link, &node->Link) && i != n) {
+		node = (EFI_SHELL_FILE_INFO *)GetNextNode(&list_head->Link, &node->Link);
+		i++;
+	}
+
+	return node;
+}
