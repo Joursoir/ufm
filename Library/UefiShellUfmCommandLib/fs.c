@@ -87,3 +87,25 @@ VOID fsa_release(struct fs_array *fsa)
 	}
 	FreePool(fsa);
 }
+
+struct fs_array *scanfs(VOID)
+{
+	UINTN handle_count;
+	EFI_HANDLE *handle_buffer;
+	struct fs_array *fsa;
+	EFI_STATUS status;
+
+	status = gBS->LocateHandleBuffer(
+		ByProtocol,
+		&gEfiSimpleFileSystemProtocolGuid,
+		NULL,
+		&handle_count,
+		&handle_buffer
+	);
+	if(EFI_ERROR(status) || handle_count <= 0)
+		return NULL;
+
+	fsa = fsa_alloc(handle_buffer, handle_count);
+	FreePool(handle_buffer);
+	return fsa;
+}

@@ -27,4 +27,11 @@ struct fs_array *fsa_alloc(EFI_HANDLE *handles, UINTN count);
 */
 VOID fsa_release(struct fs_array *fsa);
 
+/*
+ * Gets names of filesystems represented on the system
+ *
+ * return: A pointer to the allocated structure or NULL if allocation fails
+*/
+struct fs_array *scanfs(VOID);
+
 #endif /* UFM_FS_H */
