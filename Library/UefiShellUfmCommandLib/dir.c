@@ -62,3 +62,29 @@ VOID dirl_release(struct dir_list *dl)
 
 	FreePool(dl);
 }
+
+struct dir_list *scandir(CONST CHAR16 *search_path, CONST CHAR16 *wildcard,
+	CONST UINT64 attr)
+{
+	UINTN i, path_size = 0;
+	CHAR16 *path = NULL;
+	struct dir_list *list;
+
+	path = StrnCatGrow(&path, &path_size, search_path, 0);
+	if(!path)
+		return NULL;
+
+	i = StrLen(path) - 1;
+	if(path[i] != L'\\' && path[i] != L'/')
+		path = StrnCatGrow(&path, &path_size, L"\\", 0);
+
+	path = StrnCatGrow(&path, &path_size, wildcard, 0);
+	if(!path)
+		return NULL;
+
+	PathCleanUpDirectories(path);
+	list = dirl_alloc(path, attr);
+
+	SHELL_FREE_NON_NULL(path);
+	return list;
+}

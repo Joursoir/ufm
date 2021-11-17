@@ -27,4 +27,18 @@ struct dir_list *dirl_alloc(CHAR16 *search_path, CONST UINT64 attr);
 */
 VOID dirl_release(struct dir_list *dl);
 
+/*
+ * Opens a directory and gets all its matching entries. This function 
+ * supports wildcards and will process '?' and '*' as such
+ * P.S: it's frontend function of dirl_alloc()
+ *
+ * search_path: the pointer to path string
+ * wildcard: the pointer to wildcard string
+ * attr: required file attributes
+ *
+ * return: A pointer to the allocated structure or NULL if allocation fails
+*/
+struct dir_list *scandir(CONST CHAR16 *search_path, CONST CHAR16 *wildcard,
+    CONST UINT64 attr);
+
 #endif /* UFM_DIR_H */
