@@ -1,5 +1,5 @@
 # UEFI File Manager (UFM)
-A dual pane file manager with a text based user interface for UEFI environment. Distributed under the GNU General Public License, version 3.
+A dual pane file manager with a text based user interface for UEFI environment. Distributed under the BSD-2-Clause Plus Patent License.
 
 _Requires EFI Shell v2.0 and above for correct work_
 
