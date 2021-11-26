@@ -9,9 +9,10 @@ struct dir_list;
 struct fs_array;
 
 struct panel_ctx {
-	struct window *wname, *wsize, *wmodt;
-	struct window *winfo;
 	BOOLEAN	show_fs; // is filesystems showing now?
+	struct window *wbg; // static window
+	struct window *wcwd, *wlist, *wfname; // dynamic windows
+	UINTN name_cols;
 
 	CONST CHAR16 *cwd; // current work directory
 

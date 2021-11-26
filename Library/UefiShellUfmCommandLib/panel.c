@@ -21,7 +21,6 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 
 	struct panel_ctx *panel;
 	UINTN name_cols = cols - 1 - MODIFYTIME_COLS - 1 - SIZE_COLS - 1 - 1;
-	UINTN rows = lines - 2;
 	BOOLEAN res = FALSE;
 
 	panel = AllocateZeroPool(sizeof(struct panel_ctx));
@@ -30,64 +29,50 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 
 	do { // START DO
 
-	panel->wname = newwin(scr, name_cols + 2, rows, x, y);
-	if(!panel->wname)
+	panel->wbg = newwin(scr, cols, lines, x, y);
+	if(!panel->wbg)
 		break;
-	wborder(panel->wname,
+	wborder(panel->wbg,
 		BOXDRAW_VERTICAL, BOXDRAW_VERTICAL,
 		BOXDRAW_HORIZONTAL, BOXDRAW_HORIZONTAL,
-		BOXDRAW_DOWN_RIGHT, BOXDRAW_DOWN_HORIZONTAL,
-		BOXDRAW_VERTICAL_RIGHT, BOXDRAW_UP_HORIZONTAL
-	);
-	mvwprintf(panel->wname, 1 + ((name_cols - 4) / 2), 1, L"Name");
-
-	panel->wsize = newwin(scr, SIZE_COLS + 2, rows, x + 1 + name_cols, y);
-	if(!panel->wsize)
-		break;
-	wborder(panel->wsize,
-		BOXDRAW_VERTICAL, BOXDRAW_VERTICAL,
-		BOXDRAW_HORIZONTAL, BOXDRAW_HORIZONTAL,
-		BOXDRAW_DOWN_HORIZONTAL, BOXDRAW_DOWN_HORIZONTAL,
-		BOXDRAW_UP_HORIZONTAL, BOXDRAW_UP_HORIZONTAL
-	);
-	mvwprintf(panel->wsize, 1 + ((SIZE_COLS - 4) / 2), 1, L"Size");
-
-	panel->wmodt = newwin(scr, MODIFYTIME_COLS + 2, rows,
-		x + 1 + name_cols + 1 + SIZE_COLS, y);
-	if(!panel->wmodt)
-		break;
-	wborder(panel->wmodt,
-		BOXDRAW_VERTICAL, BOXDRAW_VERTICAL,
-		BOXDRAW_HORIZONTAL, BOXDRAW_HORIZONTAL,
-		BOXDRAW_DOWN_HORIZONTAL, BOXDRAW_DOWN_LEFT,
-		BOXDRAW_UP_HORIZONTAL, BOXDRAW_VERTICAL_LEFT
-	);
-	mvwprintf(panel->wmodt, 1 + ((MODIFYTIME_COLS - 11) / 2), 1, L"Modify Time");
-
-	panel->winfo = newwin(scr, cols, 3, x, y + lines - 3);
-	if(!panel->winfo)
-		break;
-	wborder(panel->winfo,
-		BOXDRAW_VERTICAL, BOXDRAW_VERTICAL,
-		BOXDRAW_HORIZONTAL, BOXDRAW_HORIZONTAL,
-		BOXDRAW_VERTICAL_RIGHT, BOXDRAW_VERTICAL_LEFT,
+		BOXDRAW_DOWN_RIGHT, BOXDRAW_DOWN_LEFT,
 		BOXDRAW_UP_RIGHT, BOXDRAW_UP_LEFT
 	);
+	mvwprintf(panel->wbg, 1 + ((name_cols - 4) / 2), 1, L"Name");
+	mvwvline(panel->wbg, 1 + name_cols, 1, BOXDRAW_VERTICAL, 1);
+	mvwprintf(panel->wbg, 1 + name_cols + 1 + ((SIZE_COLS - 4) / 2), 1, L"Size");
+	mvwvline(panel->wbg, cols - 1 - MODIFYTIME_COLS - 1, 1, BOXDRAW_VERTICAL, 1);
+	mvwprintf(panel->wbg, 1 + name_cols + 1 + SIZE_COLS + 1 + ((MODIFYTIME_COLS - 11) / 2), 1, L"Modify Time");
+	
+	panel->wcwd = newwin(scr, cols - 4, 1, x + 2, y);
+	if(!panel->wcwd)
+		break;
+
+	panel->wlist = newwin(scr, cols - 2, lines - 5, x + 1, y + 2);
+	if(!panel->wlist)
+		break;
+
+	mvwhline(panel->wbg, 1, lines - 3, BOXDRAW_HORIZONTAL, cols - 2);
+	panel->wfname = newwin(scr, cols - 2, 1, x + 1, lines - 1);
+	if(!panel->wfname)
+		break;
 
 	res = TRUE;
 
 	} while(0); // END DO
-
-	panel->cwd = path;
-	panel->curline = 1;
-	panel->list_lines = rows - 2 - 1;
-	panel->start_entry = 1;
 
 	if(!res) {
 		panel_release(panel);
 		return NULL;
 	}
 
+	panel->cwd = path;
+	panel->name_cols = name_cols;
+	panel->curline = 1;
+	panel->list_lines = lines - 5;
+	panel->start_entry = 1;
+
+	wrefresh(panel->wbg);
 	res = panel_show(panel, panel->cwd);
 	if(!res) {
 		panel_release(panel);
@@ -100,14 +85,14 @@ VOID panel_release(struct panel_ctx *p)
 {
 	ASSERT(p != NULL);
 
-	if(p->winfo)
-		delwin(p->winfo);
-	if(p->wname)
-		delwin(p->wname);
-	if(p->wsize)
-		delwin(p->wsize);
-	if(p->wmodt)
-		delwin(p->wmodt);
+	if(p->wbg)
+		delwin(p->wbg);
+	if(p->wcwd)
+		delwin(p->wcwd);
+	if(p->wlist)
+		delwin(p->wlist);
+	if(p->wfname)
+		delwin(p->wfname);
 
 	FreePool(p);
 }
