@@ -33,4 +33,13 @@ struct screen *prepare_screen(VOID);
 */
 VOID forget_screen(struct screen *scr);
 
+/*
+ * Clears the screen
+ *
+ * scr: the screen on which to operate
+ *
+ * return: VOID
+*/
+VOID screen_clear(struct screen *scr);
+
 #endif /* UFM_TBI_SCREEN_H */

@@ -34,3 +34,10 @@ VOID forget_screen(struct screen *scr)
 
 	FreePool(scr);
 }
+
+VOID screen_clear(struct screen *scr)
+{
+	ASSERT(scr != NULL);
+
+	scr->stdout->ClearScreen(scr->stdout);
+}
