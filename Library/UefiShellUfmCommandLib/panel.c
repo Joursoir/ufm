@@ -70,14 +70,13 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 		return NULL;
 	}
 
-	panel->cwd = path;
 	panel->name_cols = name_cols;
 	panel->curline = 1;
 	panel->list_lines = lines - 5;
 	panel->start_entry = 1;
 
 	wrefresh(panel->wbg);
-	res = panel_show(panel, panel->cwd);
+	res = panel_show(panel, path);
 	if(!res) {
 		panel_release(panel);
 		return NULL;
@@ -99,6 +98,8 @@ VOID panel_release(struct panel_ctx *p)
 		delwin(p->wfname);
 	if(p->wmarked)
 		delwin(p->wmarked);
+	if(p->cwd)
+		FreePool(p->cwd);
 
 	FreePool(p);
 }
