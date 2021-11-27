@@ -14,6 +14,22 @@
 #define SIZE_COLS 7
 #define MODIFYTIME_COLS 12
 
+STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
+{
+	if(p->cwd) {
+		FreePool(p->cwd);
+		p->cwd = NULL;
+	}
+	if(path)
+		StrnCatGrow(&p->cwd, NULL, path, 0);
+
+	mvwhline(p->wcwd, 0, 0, BOXDRAW_HORIZONTAL, p->wcwd->width);
+	wattrset(p->wcwd, EFI_TEXT_ATTR(EFI_WHITE, EFI_BLACK));
+	mvwprintf(p->wcwd, 0, 0, L" %s ", p->cwd ? p->cwd : L" ");
+	wattroff(p->wcwd);
+	wrefresh(p->wcwd);
+}
+
 struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 		INT32 cols, INT32 lines, INT32 x, INT32 y)
 {
