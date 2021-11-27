@@ -11,7 +11,7 @@ struct fs_array;
 struct panel_ctx {
 	BOOLEAN	show_fs; // is filesystems showing now?
 	struct window *wbg; // static window
-	struct window *wcwd, *wlist, *wfname; // dynamic windows
+	struct window *wcwd, *wlist, *wfname, *wmarked; // dynamic windows
 	UINTN name_cols;
 
 	CONST CHAR16 *cwd; // current work directory

@@ -57,6 +57,10 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 	if(!panel->wfname)
 		break;
 
+	panel->wmarked = newwin(scr, cols - 4, 1, x + 2, lines - 2);
+	if(!panel->wmarked)
+		break;
+
 	res = TRUE;
 
 	} while(0); // END DO
@@ -93,6 +97,8 @@ VOID panel_release(struct panel_ctx *p)
 		delwin(p->wlist);
 	if(p->wfname)
 		delwin(p->wfname);
+	if(p->wmarked)
+		delwin(p->wmarked);
 
 	FreePool(p);
 }
