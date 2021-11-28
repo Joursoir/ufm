@@ -14,6 +14,28 @@
 #define SIZE_COLS 7
 #define MODIFYTIME_COLS 12
 
+STATIC VOID highlight_line(struct panel_ctx *p, UINTN line, INT32 fg, INT32 bg)
+{
+	CHAR16 *str;
+	INT32 attr;
+	UINTN ui_line;
+
+	ui_line = (line-1) % p->list_lines;
+	attr = p->wlist->attr[ui_line][0];
+	if(fg < 0x0)
+		fg = attr & 0x0F;
+	if(bg < 0x0)
+		bg = ((attr & 0xF0) >> 4);
+	attr = EFI_TEXT_ATTR(fg, bg);
+	
+	wattrset(p->wlist, attr);
+	str = p->wlist->text[ui_line];
+	mvwprintf(p->wlist, 0, ui_line, str);
+	wattroff(p->wlist);
+
+	wrefresh(p->wlist);
+}
+
 STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
 {
 	if(p->cwd) {
