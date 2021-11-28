@@ -52,6 +52,11 @@ struct dir_list *dirl_alloc(CHAR16 *search_path, CONST UINT64 attr)
 
 	dl->list_head = list_head;
 	dl->len = length;
+	dl->marked = AllocateZeroPool(length * sizeof(BOOLEAN));
+	if(!dl->marked) {
+		dirl_release(dl);
+		return NULL;
+	}
 	return dl;
 }	
 
@@ -59,6 +64,8 @@ VOID dirl_release(struct dir_list *dl)
 {
 	if(dl->list_head)
 		ShellCloseFileMetaArg(&dl->list_head);
+	if(dl->marked)
+		FreePool(dl->marked);
 
 	FreePool(dl);
 }

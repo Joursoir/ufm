@@ -5,6 +5,7 @@
 
 struct dir_list {
 	EFI_SHELL_FILE_INFO *list_head;
+    BOOLEAN *marked; // files are marked on a panel
 	int len; // number of elements in list
 };
 
