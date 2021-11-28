@@ -14,6 +14,15 @@
 #define SIZE_COLS 7
 #define MODIFYTIME_COLS 12
 
+#define HIGHLIGHT_LINE_AS_CURRENT(panel, line) \
+	highlight_line(panel, line, -1, EFI_CYAN)
+#define UNHIGHLIGHT_LINE_AS_CURRENT(panel, line) \
+	highlight_line(panel, line, -1, EFI_BLACK)
+#define HIGHLIGHT_LINE_AS_MARK(panel, line) \
+	highlight_line(panel, line, EFI_YELLOW, -1)
+#define UNHIGHLIGHT_LINE_AS_MARK(panel, line) \
+	highlight_line(panel, line, EFI_LIGHTGRAY, -1)
+
 STATIC VOID highlight_line(struct panel_ctx *p, UINTN line, INT32 fg, INT32 bg)
 {
 	CHAR16 *str;
