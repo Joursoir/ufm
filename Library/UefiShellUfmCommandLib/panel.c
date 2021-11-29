@@ -61,6 +61,22 @@ STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
 	wrefresh(p->wcwd);
 }
 
+STATIC VOID update_file_info(struct panel_ctx *p)
+{
+	EFI_SHELL_FILE_INFO *file;
+	CONST CHAR16 *name;
+
+	if(!p->cwd)
+		name = p->fsa->full_name[p->curline - 1];
+	else {
+		file = dirl_getn(p->dirs, p->curline);
+		name = file->FileName;
+	}
+
+	mvwprintf(p->wfname, 0, 0, L"%-*s", p->wfname->width, name);
+	wrefresh(p->wfname);
+}
+
 STATIC VOID update_marked_info(struct panel_ctx *p)
 {
 	mvwhline(p->wmarked, 0, 0, BOXDRAW_HORIZONTAL, p->wmarked->width);
