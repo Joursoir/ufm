@@ -10,8 +10,10 @@
 #include <Uefi.h>
 
 struct screen;
+struct window;
 
-BOOLEAN init_menubar(struct screen *scr);
-VOID free_menubar(VOID);
+struct window *init_menubar(struct screen *scr);
+VOID free_menubar(struct window *w);
+VOID menubar_refresh(struct window *w);
 
 #endif /* UFM_MENU_BAR_H */

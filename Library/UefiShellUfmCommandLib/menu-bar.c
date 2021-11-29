@@ -4,22 +4,27 @@
 #include "tbi/win.h"
 #include "menu-bar.h"
 
-struct window *menubar = NULL;
-
-BOOLEAN init_menubar(struct screen *scr)
+struct window *init_menubar(struct screen *scr)
 {
-	menubar = newwin(scr, scr->columns, 1, 0, 0);
+	struct window *menubar = newwin(scr, scr->columns, 1, 0, 0);
 	if(!menubar)
-		return FALSE;
+		return NULL;
 
-	wrefresh(menubar);
-	return TRUE;
+	mvwprintf(menubar, 0, 0, L"Menu bar");
+	menubar_refresh(menubar);
+	return menubar;
 }
 
-VOID free_menubar(VOID)
+VOID free_menubar(struct window *w)
 {
-	ASSERT(menubar != NULL);
+	ASSERT(w != NULL);
 
-	delwin(menubar);
-	menubar = NULL;
+	delwin(w);
+}
+
+VOID menubar_refresh(struct window *w)
+{
+	ASSERT(w != NULL);
+	
+	wrefresh(w);
 }
