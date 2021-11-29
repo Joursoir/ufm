@@ -61,6 +61,17 @@ STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
 	wrefresh(p->wcwd);
 }
 
+STATIC VOID update_marked_info(struct panel_ctx *p)
+{
+	mvwhline(p->wmarked, 0, 0, BOXDRAW_HORIZONTAL, p->wmarked->width);
+	if(p->marked) {
+		wattrset(p->wmarked, EFI_TEXT_ATTR(EFI_WHITE, EFI_BLACK));
+		mvwprintf(p->wmarked, 0, 0, L" Files: %d ", p->marked);
+		wattroff(p->wmarked);
+	}
+	wrefresh(p->wmarked);
+}
+
 struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 		INT32 cols, INT32 lines, INT32 x, INT32 y)
 {
