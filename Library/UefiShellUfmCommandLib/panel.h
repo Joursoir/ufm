@@ -60,4 +60,14 @@ VOID panel_release(struct panel_ctx *p);
 */
 BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line);
 
+/*
+ * Changes the working directory
+ *
+ * p: the panel on which to operate
+ * path: the pointer to path string
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path);
+
 #endif /* UFM_PANEL_H */

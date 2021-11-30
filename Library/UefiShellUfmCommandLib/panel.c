@@ -305,3 +305,35 @@ BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line)
 	return TRUE;
 }
 
+BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path)
+{
+	struct fs_array *fsa = NULL;
+	struct dir_list *dirs = NULL;
+	ASSERT(p != NULL);
+
+	if(path) {
+		dirs = scandir(path, L"*", 0);
+		if(!dirs)
+			return FALSE;
+	}
+	else {
+		fsa = scanfs();
+		if(!fsa)
+			return FALSE;
+	}
+
+	set_cwd(p, path);
+	if(p->dirs)
+		dirl_release(p->dirs);
+	if(p->fsa)
+		fsa_release(p->fsa);
+	p->dirs = dirs;
+	p->fsa = fsa;
+	p->marked = 0;
+	p->start_entry = 0;
+
+	update_marked_info(p);
+	panel_move_cursor(p, 1);
+	return TRUE;
+}
+
