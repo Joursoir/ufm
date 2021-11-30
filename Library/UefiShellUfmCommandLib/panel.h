@@ -50,4 +50,14 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 */
 VOID panel_release(struct panel_ctx *p);
 
+/*
+ * Moves cursor position to specified line
+ *
+ * p: the panel on which to operate
+ * line: the line coordinate (starts from 1)
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line);
+
 #endif /* UFM_PANEL_H */

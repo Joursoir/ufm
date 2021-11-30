@@ -278,3 +278,30 @@ VOID panel_release(struct panel_ctx *p)
 
 	FreePool(p);
 }
+BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line)
+{
+	UINTN oldline = p->curline;
+	UINTN maxlen = (p->cwd) ? p->dirs->len : p->fsa->len;
+
+	if(line < 1 || line > maxlen)
+		return FALSE;
+
+	if(line < p->start_entry || line >= (p->start_entry + p->list_lines) ||
+			p->start_entry == 0)
+	{
+		p->start_entry = line - ((line-1) % p->list_lines);
+		
+		if(!p->cwd)
+			display_fs(p, p->start_entry);
+		else
+			display_files(p, p->start_entry);
+	}
+	else
+		UNHIGHLIGHT_LINE_AS_CURRENT(p, oldline);
+
+	p->curline = line;
+	update_file_info(p);
+	HIGHLIGHT_LINE_AS_CURRENT(p, p->curline);
+	return TRUE;
+}
+
