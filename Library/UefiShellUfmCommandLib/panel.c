@@ -23,6 +23,24 @@
 #define UNHIGHLIGHT_LINE_AS_MARK(panel, line) \
 	highlight_line(panel, line, EFI_LIGHTGRAY, -1)
 
+STATIC VOID display_fs(struct panel_ctx *p, UINTN start_index)
+{
+	UINTN line, i;
+
+	for(line = 0, i = start_index - 1; line < p->list_lines; line++, i++)
+	{
+		if(i >= p->fsa->len) {
+			clear_list_line(p, line);
+			continue;
+		}
+
+		mvwprintf(p->wlist, 0, line, L"%-*s%c%*s%c%*s",
+			p->name_cols, p->fsa->full_name[i], BOXDRAW_VERTICAL,
+			SIZE_COLS, L"<fsys>", BOXDRAW_VERTICAL,
+			MODIFYTIME_COLS, L"");
+	}
+}
+
 STATIC VOID highlight_line(struct panel_ctx *p, UINTN line, INT32 fg, INT32 bg)
 {
 	CHAR16 *str;
