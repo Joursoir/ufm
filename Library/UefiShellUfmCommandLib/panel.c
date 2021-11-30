@@ -45,6 +45,14 @@ STATIC CONST CHAR16 *get_month_string(UINT8 month)
 	return L"xxx";
 }
 
+STATIC VOID clear_list_line(struct panel_ctx *p, UINTN line)
+{
+	mvwprintf(p->wlist, 0, line, L"%-*s%c%*s%c%*s",
+		p->name_cols, L"", BOXDRAW_VERTICAL,
+		SIZE_COLS, L"", BOXDRAW_VERTICAL,
+		MODIFYTIME_COLS, L"");
+}
+
 STATIC VOID display_fs(struct panel_ctx *p, UINTN start_index)
 {
 	UINTN line, i;
