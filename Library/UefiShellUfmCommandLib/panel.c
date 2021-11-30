@@ -13,6 +13,7 @@
 
 #define SIZE_COLS 7
 #define MODIFYTIME_COLS 12
+#define MONTH_LENGTH 3
 
 #define HIGHLIGHT_LINE_AS_CURRENT(panel, line) \
 	highlight_line(panel, line, -1, EFI_CYAN)
@@ -22,6 +23,27 @@
 	highlight_line(panel, line, EFI_YELLOW, -1)
 #define UNHIGHLIGHT_LINE_AS_MARK(panel, line) \
 	highlight_line(panel, line, EFI_LIGHTGRAY, -1)
+
+STATIC CONST CHAR16 *get_month_string(UINT8 month)
+{
+	switch(month) {
+		case 1: return L"jan";
+		case 2: return L"feb";
+		case 3: return L"mar";
+		case 4: return L"apr";
+		case 5: return L"may";
+		case 6: return L"jun";
+		case 7: return L"jul";
+		case 8: return L"aug";
+		case 9: return L"sep";
+		case 10: return L"oct";
+		case 11: return L"nov";
+		case 12: return L"dec";
+		default: break;
+	}
+
+	return L"xxx";
+}
 
 STATIC VOID display_fs(struct panel_ctx *p, UINTN start_index)
 {
@@ -38,6 +60,59 @@ STATIC VOID display_fs(struct panel_ctx *p, UINTN start_index)
 			p->name_cols, p->fsa->full_name[i], BOXDRAW_VERTICAL,
 			SIZE_COLS, L"<fsys>", BOXDRAW_VERTICAL,
 			MODIFYTIME_COLS, L"");
+	}
+}
+
+STATIC VOID display_files(struct panel_ctx *p, UINTN start_index)
+{
+	UINTN i;
+	EFI_SHELL_FILE_INFO *list_head, *node;
+	EFI_TIME cur_time, *mod_time;
+	BOOLEAN directory;
+
+	gRT->GetTime(&cur_time, NULL);
+	list_head = p->dirs->list_head;
+
+	node = dirl_getn(p->dirs, start_index);
+	for(i = 0; i <= p->list_lines; i++)
+	{
+		if(IsNull(&list_head->Link, &node->Link) || 
+				((start_index + i) > p->dirs->len)) {
+			clear_list_line(p, i);
+			continue;
+		}
+
+		mod_time = &(node->Info->ModificationTime);
+		directory = FALSE;
+		if((node->Info->Attribute & EFI_FILE_DIRECTORY) != 0)
+			directory = TRUE;
+
+		// mvwprintf doesn't support "-*.*s" :(
+
+		// column "name"
+		mvwprintf(p->wlist, 0, i, L"%c%-*s", directory ? L'/' : L' ',
+			p->name_cols - 1, node->FileName);
+
+		// column "size"
+		if(directory)
+			mvwprintf(p->wlist, p->name_cols, i, L"%c%*.*s%c", BOXDRAW_VERTICAL,
+				SIZE_COLS, SIZE_COLS, L"<dir>");
+		else
+			mvwprintf(p->wlist, p->name_cols, i, L"%c%*d%c", BOXDRAW_VERTICAL,
+				SIZE_COLS, node->Info->FileSize);
+
+		// column "modify time"
+		mvwprintf(p->wlist, p->wlist->width - MODIFYTIME_COLS - 1, i, 
+			L"%c%*s %02u ", BOXDRAW_VERTICAL, MONTH_LENGTH,
+			get_month_string(mod_time->Month), mod_time->Day);
+		if(cur_time.Year == mod_time->Year)
+			mvwprintf(p->wlist, p->wlist->width - MODIFYTIME_COLS + 7, i,
+				L"%02u:%02u", mod_time->Hour, mod_time->Minute);
+		else
+			mvwprintf(p->wlist, p->wlist->width - MODIFYTIME_COLS + 7, i,
+				L"%5u", mod_time->Year);
+
+		node = (EFI_SHELL_FILE_INFO *)GetNextNode(&list_head->Link, &node->Link);
 	}
 }
 
