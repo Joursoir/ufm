@@ -246,12 +246,10 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 	}
 
 	panel->name_cols = name_cols;
-	panel->curline = 1;
 	panel->list_lines = lines - 5;
-	panel->start_entry = 1;
 
 	wrefresh(panel->wbg);
-	res = panel_show(panel, path);
+	res = panel_cd_to(panel, path);
 	if(!res) {
 		panel_release(panel);
 		return NULL;
