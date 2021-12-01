@@ -368,3 +368,8 @@ BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line)
 	return TRUE;
 }
 
+EFI_INPUT_KEY panel_getch(struct panel_ctx *p)
+{
+	return wgetch(p->wbg);
+}
+

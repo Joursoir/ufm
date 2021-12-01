@@ -91,4 +91,14 @@ VOID panel_set_active(struct panel_ctx *p, BOOLEAN active);
 */
 BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line);
 
+/*
+ * Gets character from the input device.
+ *
+ * p: the panel on which to operate
+ *
+ * return: A pointer to a buffer that is filled in with the keystroke
+ *         information for the key that was pressed.
+*/
+EFI_INPUT_KEY panel_getch(struct panel_ctx *p);
+
 #endif /* UFM_PANEL_H */
