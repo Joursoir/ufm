@@ -87,6 +87,16 @@ VOID wattroff(struct window *w);
 VOID echo(struct window *w, BOOLEAN state);
 
 /*
+ * Gets character from the input device.
+ *
+ * w: the window on which to operate
+ *
+ * return: A pointer to a buffer that is filled in with the keystroke
+ *         information for the key that was pressed.
+*/
+EFI_INPUT_KEY wgetch(struct window *w);
+
+/*
  * Moves cursor position to specified coordinates
  *
  * w: the window on which to operate

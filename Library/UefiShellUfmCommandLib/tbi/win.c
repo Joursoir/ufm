@@ -5,6 +5,7 @@
 #include <Library/PrintLib.h> // UnicodeVSPrint()
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 
 #include "screen.h"
 #include "win.h"
@@ -120,6 +121,24 @@ VOID echo(struct window *w, BOOLEAN state)
 	ASSERT(w != NULL);
 
 	w->echo = state;
+}
+
+EFI_INPUT_KEY wgetch(struct window *w)
+{
+	UINTN key_event = 0;
+	EFI_SIMPLE_TEXT_INPUT_PROTOCOL *stdin;
+	EFI_INPUT_KEY key = { 0 };
+
+	ASSERT(w != NULL);
+
+	stdin = w->scr->stdin;
+	gBS->WaitForEvent(1, &stdin->WaitForKey, &key_event);
+	stdin->ReadKeyStroke(stdin, &key);
+
+	if(echo) {
+		; // print char
+	}
+	return key;
 }
 
 BOOLEAN wmove(struct window *w, INT32 x, INT32 y)
