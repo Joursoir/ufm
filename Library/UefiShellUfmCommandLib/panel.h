@@ -70,4 +70,14 @@ BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line);
 */
 BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path);
 
+/*
+ * Marks the file as selected. Supports work only with files.
+ *
+ * p: the panel on which to operate
+ * line: the line coordinate (starts from 1)
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line);
+
 #endif /* UFM_PANEL_H */

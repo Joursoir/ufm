@@ -335,3 +335,25 @@ BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path)
 	return TRUE;
 }
 
+BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line)
+{
+	UINTN idx = line - 1;
+
+	if(!p->cwd) // we can mark only files
+		return FALSE;
+
+	if(p->dirs->marked[idx]) {
+		UNHIGHLIGHT_LINE_AS_MARK(p, line);
+		p->marked--;
+	}
+	else {
+		HIGHLIGHT_LINE_AS_MARK(p, line);
+		p->marked++;
+	}
+
+	p->dirs->marked[idx] = !p->dirs->marked[idx];
+	update_marked_info(p);
+	wrefresh(p->wlist);
+	return TRUE;
+}
+
