@@ -250,7 +250,7 @@ UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
 	x = w->curx;
 	y = w->cury;
 
-	walker_size = w->width * sizeof(CHAR16);
+	walker_size = (w->width + 1) * sizeof(CHAR16);
 	fmt_walker = AllocateZeroPool(walker_size);
 	if(!fmt_walker)
 		return 0;
