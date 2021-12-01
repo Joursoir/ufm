@@ -44,7 +44,7 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 /*
  * Deletes the panel, frees the structure
  *
- * w: the panel on which to operate
+ * p: the panel on which to operate
  *
  * return: VOID
 */
