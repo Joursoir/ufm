@@ -276,6 +276,7 @@ VOID panel_release(struct panel_ctx *p)
 
 	FreePool(p);
 }
+
 BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line)
 {
 	UINTN oldline = p->curline;
@@ -333,6 +334,16 @@ BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path)
 	update_marked_info(p);
 	panel_move_cursor(p, 1);
 	return TRUE;
+}
+
+VOID panel_set_active(struct panel_ctx *p, BOOLEAN flag)
+{
+	if(flag == TRUE) {
+		HIGHLIGHT_LINE_AS_CURRENT(p, p->curline);
+		return;
+	}
+
+	UNHIGHLIGHT_LINE_AS_CURRENT(p, p->curline);
 }
 
 BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line)

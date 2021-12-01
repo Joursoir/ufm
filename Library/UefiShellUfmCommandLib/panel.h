@@ -71,6 +71,17 @@ BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line);
 BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path);
 
 /*
+ * Changes the active state
+ *
+ * p: the panel on which to operate
+ * active: TRUE if the panel should be activated. FALSE if the
+ *         panel should be disabled
+ *
+ * return: VOID
+*/
+VOID panel_set_active(struct panel_ctx *p, BOOLEAN active);
+
+/*
  * Marks the file as selected. Supports work only with files.
  *
  * p: the panel on which to operate
