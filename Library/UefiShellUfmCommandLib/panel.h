@@ -101,4 +101,13 @@ BOOLEAN panel_mark_file(struct panel_ctx *p, UINTN line);
 */
 EFI_INPUT_KEY panel_getch(struct panel_ctx *p);
 
+/*
+ * Does the output of panel to the terminal
+ *
+ * w: the panel on which to operate
+ *
+ * return: VOID
+*/
+VOID panel_refresh(struct panel_ctx *p);
+
 #endif /* UFM_PANEL_H */

@@ -373,3 +373,11 @@ EFI_INPUT_KEY panel_getch(struct panel_ctx *p)
 	return wgetch(p->wbg);
 }
 
+VOID panel_refresh(struct panel_ctx *p)
+{
+	wrefresh(p->wbg);
+	wrefresh(p->wcwd);
+	wrefresh(p->wlist);
+	wrefresh(p->wfname);
+	wrefresh(p->wmarked);
+}
