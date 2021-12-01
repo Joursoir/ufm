@@ -29,6 +29,7 @@ struct window {
 	INT32 **attr;
 
 	INT32 cur_attr;
+	BOOLEAN echo;
 };
 
 /*
@@ -73,6 +74,17 @@ VOID wattrset(struct window *w, INT32 attr);
  * return: VOID
 */
 VOID wattroff(struct window *w);
+
+/*
+ * Changes the echo state. Echoing is disabled by default.
+ *
+ * w: the window on which to operate
+ * state: TRUE if the echo should be activated. FALSE if the
+ *        echo should be disabled
+ *
+ * return: VOID
+*/
+VOID echo(struct window *w, BOOLEAN state);
 
 /*
  * Moves cursor position to specified coordinates

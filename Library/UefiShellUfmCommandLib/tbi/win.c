@@ -58,6 +58,7 @@ struct window *newwin(struct screen *s,
 	win->width = ncols;
 	win->height = nlines;
 	win->cur_attr = s->attr;
+	win->echo = FALSE;
 
 	for(y = 0; y < nlines; y++) {
 		win->text[y] = AllocatePool((ncols + 1) * sizeof(CHAR16));
@@ -112,6 +113,13 @@ VOID wattroff(struct window *w)
 	ASSERT(w != NULL);
 
 	w->cur_attr = w->scr->attr;
+}
+
+VOID echo(struct window *w, BOOLEAN state)
+{
+	ASSERT(w != NULL);
+
+	w->echo = state;
 }
 
 BOOLEAN wmove(struct window *w, INT32 x, INT32 y)
