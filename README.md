@@ -44,10 +44,3 @@ ShellPkg/Application/UfmApp/UfmApp.inf
 ```
 UfmCommandLib|Include/Library/UfmCommandLib.h
 ```
-
-## Organization of code:
-
-* lib: code of auxiliary routines
-	* tbi: responsible for pseudo-graphics (text-based interface)
-
-* scr: the application's main code
