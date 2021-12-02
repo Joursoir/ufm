@@ -1,0 +1,22 @@
+[Defines]
+  INF_VERSION                    = 1.27
+  BASE_NAME                      = UfmApp
+  FILE_GUID                      = F4DA66B6-FF95-44D6-8860-73E5D488E850
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UfmAppMain
+
+[Sources.common]
+  UfmApp.c
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiLib
+  BaseLib
+  UefiApplicationEntryPoint
+  UfmCommandLib
