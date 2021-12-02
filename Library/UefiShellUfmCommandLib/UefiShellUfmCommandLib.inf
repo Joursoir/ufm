@@ -1,0 +1,50 @@
+[Defines]
+  INF_VERSION                    = 1.25
+  BASE_NAME                      = UefiShellUfmCommandLib
+  FILE_GUID                      = 0326b619-e996-45f8-8dd3-9aebeb59b647
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = UfmCommandLib|UEFI_APPLICATION UEFI_DRIVER
+  CONSTRUCTOR                    = UefiUfmConstructor
+  DESTRUCTOR                     = UefiUfmDestructor
+  VALID_ARCHITECTURES            = X64
+
+[Sources]
+  tbi/screen.c
+  tbi/win.c
+  menu-bar.c
+  command-bar.c
+  panel.c
+  dir.c
+  fs.c
+  actions.c
+  UefiShellUfmCommandLib.c
+  
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+  
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  DevicePathLib
+  MemoryAllocationLib
+  PrintLib
+  ShellCommandLib
+  ShellLib
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+  UefiRuntimeServicesTableLib
+  
+[Guids]
+
+[Ppis]
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+
+[FeaturePcd]
+
+[Pcd]
