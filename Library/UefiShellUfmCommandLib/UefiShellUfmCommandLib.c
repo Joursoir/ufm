@@ -121,3 +121,34 @@ SHELL_STATUS EFIAPI ShellCommandRunUFM(
 	forget_context();
 	return status;
 }
+
+/**
+ Return the file name of the help text file if not using HII.
+**/
+STATIC CONST CHAR16 *EFIAPI ShellCommandGetManFileNameUfm(VOID)
+{
+	return L"ShellCommand";
+}
+
+EFI_STATUS EFIAPI UefiUfmConstructor(
+	EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
+{
+	ShellCommandRegisterCommandName(
+		L"ufm",
+		ShellCommandRunUFM,
+		ShellCommandGetManFileNameUfm,
+		0,
+		L"ufm",
+		TRUE,
+		NULL,
+		STRING_TOKEN(0)
+	);
+
+	return EFI_SUCCESS;
+}
+
+EFI_STATUS EFIAPI UefiUfmDestructor(
+	EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
+{
+	return EFI_SUCCESS;
+}
