@@ -126,7 +126,6 @@ STATIC VOID display_files(struct panel_ctx *p, UINTN start_index)
 
 STATIC VOID highlight_line(struct panel_ctx *p, UINTN line, INT32 fg, INT32 bg)
 {
-	CHAR16 *str;
 	INT32 attr;
 	UINTN ui_line;
 
@@ -137,12 +136,8 @@ STATIC VOID highlight_line(struct panel_ctx *p, UINTN line, INT32 fg, INT32 bg)
 	if(bg < 0x0)
 		bg = ((attr & 0xF0) >> 4);
 	attr = EFI_TEXT_ATTR(fg, bg);
-	
-	wattrset(p->wlist, attr);
-	str = p->wlist->text[ui_line];
-	mvwprintf(p->wlist, 0, ui_line, str);
-	wattroff(p->wlist);
 
+	whline(p->wlist, 0, ui_line, 0, attr, 0);
 	wrefresh(p->wlist);
 }
 
@@ -155,7 +150,7 @@ STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
 	if(path)
 		StrnCatGrow(&p->cwd, NULL, path, 0);
 
-	mvwhline(p->wcwd, 0, 0, BOXDRAW_HORIZONTAL, p->wcwd->width);
+	whline(p->wcwd, 0, 0, BOXDRAW_HORIZONTAL, p->wcwd->cur_attr, p->wcwd->width);
 	wattrset(p->wcwd, EFI_TEXT_ATTR(EFI_WHITE, EFI_BLACK));
 	mvwprintf(p->wcwd, 0, 0, L" %s ", p->cwd ? p->cwd : L" ");
 	wattroff(p->wcwd);
@@ -180,7 +175,7 @@ STATIC VOID update_file_info(struct panel_ctx *p)
 
 STATIC VOID update_marked_info(struct panel_ctx *p)
 {
-	mvwhline(p->wmarked, 0, 0, BOXDRAW_HORIZONTAL, p->wmarked->width);
+	whline(p->wmarked, 0, 0, BOXDRAW_HORIZONTAL, p->wmarked->cur_attr, p->wmarked->width);
 	if(p->marked) {
 		wattrset(p->wmarked, EFI_TEXT_ATTR(EFI_WHITE, EFI_BLACK));
 		mvwprintf(p->wmarked, 0, 0, L" Files: %d ", p->marked);
@@ -214,9 +209,9 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 		BOXDRAW_UP_RIGHT, BOXDRAW_UP_LEFT
 	);
 	mvwprintf(panel->wbg, 1 + ((name_cols - 4) / 2), 1, L"Name");
-	mvwvline(panel->wbg, 1 + name_cols, 1, BOXDRAW_VERTICAL, 1);
+	wvline(panel->wbg, 1 + name_cols, 1, BOXDRAW_VERTICAL, panel->wbg->cur_attr, 1);
 	mvwprintf(panel->wbg, 1 + name_cols + 1 + ((SIZE_COLS - 4) / 2), 1, L"Size");
-	mvwvline(panel->wbg, cols - 1 - MODIFYTIME_COLS - 1, 1, BOXDRAW_VERTICAL, 1);
+	wvline(panel->wbg, cols - 1 - MODIFYTIME_COLS - 1, 1, BOXDRAW_VERTICAL, panel->wbg->cur_attr, 1);
 	mvwprintf(panel->wbg, 1 + name_cols + 1 + SIZE_COLS + 1 + ((MODIFYTIME_COLS - 11) / 2), 1, L"Modify Time");
 	
 	panel->wcwd = newwin(scr, cols - 4, 1, x + 2, y);
@@ -227,7 +222,7 @@ struct panel_ctx *panel_alloc(struct screen *scr, CONST CHAR16 *path,
 	if(!panel->wlist)
 		break;
 
-	mvwhline(panel->wbg, 1, lines - 3, BOXDRAW_HORIZONTAL, cols - 2);
+	whline(panel->wbg, 1, lines - 3, BOXDRAW_HORIZONTAL, -1, cols - 2);
 	panel->wfname = newwin(scr, cols - 2, 1, x + 1, lines - 1);
 	if(!panel->wfname)
 		break;

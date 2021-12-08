@@ -176,36 +176,42 @@ BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
 	return TRUE;
 }
 
-BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
-{
-	UINTN i, length;
-	ASSERT(w != NULL);
-	CHECK_POSITION(w, x, y);
-
-	length = w->width - x;
-	if(length > n)
-		length = n;
-
-	length += x;
-	for(i = x; i < length; i++) {
-		SET_WINDOW_CHAR2(w, i, y, ch);
-	}
-	return TRUE;
-}
-
-BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n)
+BOOLEAN wvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN n)
 {
 	UINTN i, length;
 	ASSERT(w != NULL);
 	CHECK_POSITION(w, x, y);
 
 	length = w->height - y;
-	if(length > n)
+	if(n != 0 && length > n)
 		length = n;
 
 	length += y;
 	for(i = y; i < length; i++) {
-		SET_WINDOW_CHAR2(w, x, i, ch);
+		if(ch != 0)
+			w->text[i][x] = ch;
+		if(attr != -1)
+			w->attr[i][x] = attr;
+	}
+	return TRUE;
+}
+
+BOOLEAN whline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN n)
+{
+	UINTN i, length;
+	ASSERT(w != NULL);
+	CHECK_POSITION(w, x, y);
+
+	length = w->width - x;
+	if(n != 0 && length > n)
+		length = n;
+
+	length += x;
+	for(i = x; i < length; i++) {
+		if(ch != 0)
+			w->text[y][i] = ch;
+		if(attr != -1)
+			w->attr[y][i] = attr;
 	}
 	return TRUE;
 }

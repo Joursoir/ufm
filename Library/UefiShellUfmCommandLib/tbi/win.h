@@ -126,34 +126,36 @@ BOOLEAN wborder(struct window *w, CHAR16 ls, CHAR16 rs, CHAR16 ts,
 	CHAR16 bs, CHAR16 tl, CHAR16 tr, CHAR16 bl, CHAR16 br);
 
 /*
- * Moves to specified coordinates, draws a horizontal line using ch
- * starting at (x, y) in the window. The current cursor position is 
- * not changed.
+ * Draws a vertical line using ch and attr starting at (x, y) in the window.
+ * The current cursor position is not changed.
  *
  * w: the window on which to operate
  * x: the X(column) coordinate for the start of the line
  * y: the Y(row) coordinate for the start of the line
- * ch: the character used to draw the line
- * n: the maximum number of chars in the line
+ * ch: the character used to draw the line. If 0, then chars won't changed
+ * attr: the attributes used to draw the line. If -1, then attrs won't changed
+ * n: the maximum number of chars to draw. if 0, then the number of chars to
+      the end of the line
  *
  * return: FALSE upon failure and TRUE upon successful completion
 */
-BOOLEAN mvwhline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
+BOOLEAN wvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN n);
 
 /*
- * Moves to specified coordinates, draws a vertical line using ch
- * starting at (x, y) in the window. The current cursor position is 
- * not changed.
+ * Draws a horizontal line using ch and attr starting at (x, y) in the window.
+ * The current cursor position is not changed.
  *
  * w: the window on which to operate
  * x: the X(column) coordinate for the start of the line
  * y: the Y(row) coordinate for the start of the line
- * ch: the character used to draw the line
- * n: the maximum number of chars in the line
+ * ch: the character used to draw the line. If 0, then chars won't changed
+ * attr: the attributes used to draw the line. If -1, then attrs won't changed
+ * n: the maximum number of chars to draw. if 0, then the number of chars to
+      the end of the line
  *
  * return: FALSE upon failure and TRUE upon successful completion
 */
-BOOLEAN mvwvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 n);
+BOOLEAN whline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN n);
 
 /*
  * Prints formatted output on the cursor coordinates
