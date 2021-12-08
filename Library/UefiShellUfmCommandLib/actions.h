@@ -20,7 +20,10 @@ struct shortcut {
 BOOLEAN jump_up(VOID);
 BOOLEAN jump_down(VOID);
 BOOLEAN change_panel(VOID);
+BOOLEAN execute(VOID);
 BOOLEAN mark(VOID);
+BOOLEAN edit(VOID);
+BOOLEAN hexedit(VOID);
 BOOLEAN show_filesystems(VOID);
 BOOLEAN do_nothing(VOID);
 BOOLEAN quit(VOID);
