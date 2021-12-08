@@ -13,7 +13,7 @@ struct dir_list *dirl_alloc(CHAR16 *search_path, CONST UINT64 attr)
 	UINTN length = 0;
 	struct dir_list *dl;
 
-	status = ShellOpenFileMetaArg(search_path, EFI_FILE_MODE_READ, &list_head);
+	status = ShellOpenFileMetaArg(search_path, EFI_FILE_MODE_WRITE|EFI_FILE_MODE_READ, &list_head);
 	if(EFI_ERROR(status))
 		return NULL;
 
