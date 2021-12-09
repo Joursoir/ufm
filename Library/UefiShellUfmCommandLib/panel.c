@@ -301,28 +301,36 @@ BOOLEAN panel_move_cursor(struct panel_ctx *p, UINTN line)
 
 BOOLEAN panel_cd_to(struct panel_ctx *p, CONST CHAR16 *path)
 {
-	struct fs_array *fsa = NULL;
-	struct dir_list *dirs = NULL;
+	CHAR16 *own_path = NULL;
 	ASSERT(p != NULL);
 
+	// We make a copy of the path string because the next step is to 
+	// free the struct dir_list 
 	if(path) {
-		dirs = scandir(path, L"*", 0);
-		if(!dirs)
-			return FALSE;
-	}
-	else {
-		fsa = scanfs();
-		if(!fsa)
+		own_path = AllocateCopyPool(StrSize(path) + 1, path);
+		if(!own_path)
 			return FALSE;
 	}
 
-	set_cwd(p, path);
-	if(p->dirs)
+	if(p->dirs) {
 		dirl_release(p->dirs);
-	if(p->fsa)
+		p->dirs = NULL;
+	}
+	if(p->fsa) {
 		fsa_release(p->fsa);
-	p->dirs = dirs;
-	p->fsa = fsa;
+		p->fsa = NULL;
+	}
+
+	if(own_path) {
+		p->dirs = scandir(own_path, L"*", 0);
+		ASSERT(p->dirs != NULL);
+	}
+	else {
+		p->fsa = scanfs();
+		ASSERT(p->fsa != NULL);
+	}
+
+	set_cwd(p, own_path);
 	p->marked = 0;
 	p->start_entry = 0;
 
