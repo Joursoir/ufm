@@ -32,10 +32,12 @@ struct dir_list *dirl_alloc(CHAR16 *search_path, CONST UINT64 attr)
 			
 			// I have stolen code below in the source code of InternalFreeShellFileInfoNode():
 			RemoveEntryList(&node->Link);
-			FreePool((VOID*)node->Info);
+			if(node->Info != NULL)
+				FreePool((VOID*)node->Info);
 			FreePool((VOID*)node->FileName);
 			FreePool((VOID*)node->FullName);
-			gEfiShellProtocol->CloseFile(node->Handle);
+			if(node->Handle != NULL)
+				gEfiShellProtocol->CloseFile(node->Handle);
 			FreePool(node);
 			node = tmp;
 			continue;
