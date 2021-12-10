@@ -218,7 +218,7 @@ BOOLEAN whline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN 
 
 VOID waddch(struct window *w, CHAR16 ch, INT32 attr)
 {
-	INT32 x = w->curx
+	INT32 x = w->curx;
 	INT32 y = w->cury;
 
 	if(x >= w->width) {
