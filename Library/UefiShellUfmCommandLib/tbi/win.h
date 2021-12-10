@@ -158,6 +158,32 @@ BOOLEAN wvline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN 
 BOOLEAN whline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN n);
 
 /*
+ * Puts the character and attributes on the cursor coordinates of the
+ * given window. Doesn't support control characters
+ *
+ * w: the window on which to operate
+ * ch: the character used to print. If 0, then a char won't changed
+ * attr: the attributes used to print. If -1, then attrs won't changed
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+VOID waddch(struct window *w, CHAR16 ch, INT32 attr);
+
+/*
+ * Moves to specified coordinates, puts the character and attributes into the
+ * given window. Doesn't support control characters
+ *
+ * w: the window on which to operate
+ * x: the X(column) coordinate to move
+ * y: the Y(row) coordinate to move
+ * ch: the character used to print. If 0, then a char won't changed
+ * attr: the attributes used to print. If -1, then attrs won't changed
+ *
+ * return: FALSE upon failure and TRUE upon successful completion
+*/
+BOOLEAN mvwaddch(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr);
+
+/*
  * Prints formatted output on the cursor coordinates
  *
  * w: the window on which to operate

@@ -216,6 +216,37 @@ BOOLEAN whline(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr, UINTN 
 	return TRUE;
 }
 
+VOID waddch(struct window *w, CHAR16 ch, INT32 attr)
+{
+	INT32 x = w->curx
+	INT32 y = w->cury;
+
+	if(x >= w->width) {
+		w->curx = 0;
+		if(++w->cury >= w->height)
+			w->cury = 0;
+	}
+	else
+		w->curx += 1;
+
+	if(ch != 0)
+		w->text[y][x] = ch;
+	if(attr != -1)
+		w->attr[y][x] = attr;
+}
+
+BOOLEAN mvwaddch(struct window *w, INT32 x, INT32 y, CHAR16 ch, INT32 attr)
+{
+	BOOLEAN moved;
+
+	moved = wmove(w, x, y);
+	if(moved == FALSE)
+		return FALSE;
+
+	waddch(w, ch, attr);
+	return TRUE;
+}
+
 UINTN EFIAPI wprintf(struct window *w, CONST CHAR16 *fmt, ...)
 {
 	VA_LIST arg;
