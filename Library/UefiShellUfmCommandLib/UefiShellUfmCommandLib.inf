@@ -15,6 +15,7 @@
   menu-bar.c
   command-bar.c
   widget/input.c
+  dialog-box.c
   panel.c
   dir.c
   fs.c
