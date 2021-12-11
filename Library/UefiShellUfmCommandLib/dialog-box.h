@@ -4,10 +4,20 @@
 #include <Uefi.h>
 #include "widget/input.h"
 
+enum dbox_widgets {
+	DBOX_START_WID = 0,
+	DBOX_OK_BUTTON,
+	DBOX_CL_BUTTON,
+	DBOX_INPUT_BOX,
+	DBOX_END_WID
+};
+
 struct dbox_ctx {
 	struct window *wbg;
 	struct widget_input *in;
 	struct window *wok, *wcl;
+
+	enum dbox_widgets active_widget;
 };
 
 /*
@@ -34,6 +44,15 @@ struct dbox_ctx *dbox_alloc(struct screen *scr, CONST CHAR16 *title,
  * return: VOID
 */
 VOID dbox_release(struct dbox_ctx *dbox);
+
+/*
+ * Handles all keyboard actions in the dialog box
+ *
+ * dbox: the dialog box on which to operate
+ *
+ * return: TRUE if user pressed OK. Otherwise FALSE
+*/
+BOOLEAN dbox_handle(struct dbox_ctx *dbox);
 
 /*
  * Does the output of dialog box to the terminal

@@ -6,9 +6,39 @@
 
 #define COLOR_WHITE_CYAN (EFI_TEXT_ATTR(EFI_WHITE, EFI_CYAN))
 #define COLOR_WHITE_LIGHTGRAY (EFI_TEXT_ATTR(EFI_WHITE, EFI_LIGHTGRAY))
+#define HIGHLIGHT(w, active) \
+	whline(w, 0, 0, 0, active ? COLOR_WHITE_CYAN : COLOR_WHITE_LIGHTGRAY, 0)
 
 CONST CHAR16 ok_button_msg[] = L"[ OK ]";
 CONST CHAR16 cl_button_msg[] = L"[ Cancel ]";
+
+STATIC VOID highlight_widget(struct dbox_ctx *dbox, enum dbox_widgets wid, BOOLEAN active)
+{
+	if(wid == DBOX_OK_BUTTON) {
+		HIGHLIGHT(dbox->wok, active);
+		wrefresh(dbox->wok);
+	}
+	else if(wid == DBOX_CL_BUTTON) {
+		HIGHLIGHT(dbox->wcl, active);
+		wrefresh(dbox->wcl);
+	}
+	else if(wid == DBOX_INPUT_BOX)
+		input_update(dbox->in);
+}
+
+STATIC VOID set_active_widget(struct dbox_ctx *dbox, enum dbox_widgets wid)
+{
+	enum dbox_widgets extreme_val = dbox->in ? DBOX_END_WID : DBOX_INPUT_BOX;
+
+	if(wid <= DBOX_START_WID)
+		wid = extreme_val - 1;
+	else if(wid >= extreme_val)
+		wid = DBOX_START_WID + 1;
+
+	highlight_widget(dbox, dbox->active_widget, FALSE);
+	dbox->active_widget = wid;
+	highlight_widget(dbox, dbox->active_widget, TRUE);
+}
 
 struct dbox_ctx *dbox_alloc(struct screen *scr, CONST CHAR16 *title,
 	CONST CHAR16 *label, BOOLEAN wid_input, CONST CHAR16 *input_text)
@@ -54,11 +84,13 @@ struct dbox_ctx *dbox_alloc(struct screen *scr, CONST CHAR16 *title,
 	if(!dbox->wok)
 		break;
 	mvwprintf(dbox->wok, 0, 0, ok_button_msg);
+	HIGHLIGHT(dbox->wok, !wid_input);
 
 	dbox->wcl = newwin(scr, len_cl, 1, start_ok + 1 + len_ok, start_y + dbox_height - 2);
 	if(!dbox->wcl)
 		break;
 	mvwprintf(dbox->wcl, 0, 0, cl_button_msg);
+	HIGHLIGHT(dbox->wcl, FALSE);
 
 	for(y = 0; y < dbox_height; y++)
 		whline(dbox->wbg, 0, y, 0, COLOR_WHITE_LIGHTGRAY, 0);
@@ -89,6 +121,32 @@ VOID dbox_release(struct dbox_ctx *dbox)
 		delwin(dbox->wcl);
 
 	FreePool(dbox);
+}
+
+BOOLEAN dbox_handle(struct dbox_ctx *dbox)
+{
+	EFI_INPUT_KEY key;
+
+	set_active_widget(dbox, dbox->in ? DBOX_INPUT_BOX : DBOX_OK_BUTTON);
+	for(;;)
+	{
+		key = wgetch(dbox->wbg);
+
+		if(key.ScanCode == SCAN_ESC)
+			return FALSE;
+		else if(key.ScanCode == SCAN_UP)
+			set_active_widget(dbox, dbox->active_widget - 1);
+		else if(key.ScanCode == SCAN_DOWN)
+			set_active_widget(dbox, dbox->active_widget + 1);
+		else if(key.UnicodeChar == CHAR_LINEFEED || key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
+			if(dbox->active_widget == DBOX_CL_BUTTON)
+				return FALSE;
+
+			return TRUE;
+		}
+		else if(dbox->active_widget == DBOX_INPUT_BOX)
+			input_handle_char(dbox->in, key);
+	}
 }
 
 VOID dbox_refresh(struct dbox_ctx *dbox)
