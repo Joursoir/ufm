@@ -5,6 +5,18 @@
 #include <Library/ShellLib.h>
 
 /*
+ * Deletes a node including subdirectories
+ *
+ * node: the node to start deleting with
+ *
+ * return: EFI_SUCCESS           The operation was successful
+           EFI_ACCESS_DENIED     A file was read only
+           EFI_ABORTED           The abort was received
+           EFI_DEVICE_ERROR      A device error occurred reading this node
+*/
+EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node);
+
+/*
  * Creates one or more directories.
  *
  * dir_name: the name of a directory or directories to create
