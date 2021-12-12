@@ -19,6 +19,7 @@
   panel.c
   dir.c
   fs.c
+  cmds.c
   actions.c
   UefiShellUfmCommandLib.c
   
