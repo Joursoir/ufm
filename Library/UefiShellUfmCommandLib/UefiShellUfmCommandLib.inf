@@ -32,6 +32,7 @@
   BaseLib
   DebugLib
   DevicePathLib
+  FileHandleLib
   MemoryAllocationLib
   PrintLib
   ShellCommandLib
