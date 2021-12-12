@@ -20,6 +20,7 @@
 #define PANEL (fm_ctx.curpanel)
 #define LEFT_PANEL (fm_ctx.left)
 #define RIGHT_PANEL (fm_ctx.right)
+#define UPANEL ((PANEL == LEFT_PANEL) ? RIGHT_PANEL : LEFT_PANEL)
 
 STATIC CONST CHAR16 mkdir_title[] = L" Create a new directory ";
 STATIC CONST CHAR16 mkdir_label[] = L"Enter directory name:";
@@ -61,7 +62,7 @@ BOOLEAN jump_down(VOID)
 BOOLEAN change_panel(VOID)
 {
 	panel_set_active(PANEL, FALSE);
-	PANEL = (PANEL == LEFT_PANEL) ? RIGHT_PANEL : LEFT_PANEL;
+	PANEL = UPANEL;
 	panel_set_active(PANEL, TRUE);
 	return TRUE;
 }
