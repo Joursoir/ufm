@@ -9,8 +9,10 @@
 
 #include "menu-bar.h"
 #include "command-bar.h"
+#include "dialog-box.h"
 #include "panel.h"
 #include "filemanager.h"
+#include "cmds.h"
 #include "actions.h"
 
 #define MENUBAR (fm_ctx.menubar)
@@ -18,6 +20,9 @@
 #define PANEL (fm_ctx.curpanel)
 #define LEFT_PANEL (fm_ctx.left)
 #define RIGHT_PANEL (fm_ctx.right)
+
+STATIC CONST CHAR16 mkdir_title[] = L" Create a new directory ";
+STATIC CONST CHAR16 mkdir_label[] = L"Enter directory name:";
 
 STATIC EFI_STATUS shell_exec2(CONST CHAR16 *farg,
 	CONST CHAR16 *sarg, EFI_STATUS *cmd_status)
@@ -115,6 +120,35 @@ BOOLEAN hexedit(VOID)
 
 	shell_exec2(L"hexedit ", file->FullName, &cmd_status);
 	redraw();
+	return TRUE;
+}
+
+BOOLEAN mkdir(VOID)
+{
+	struct dbox_ctx *dbox;
+	UINTN line = PANEL->curline;
+	EFI_STATUS status;
+	BOOLEAN status_op;
+
+	if(!PANEL->cwd)
+		return FALSE;
+
+	dbox = dbox_alloc(fm_ctx.scr, mkdir_title, mkdir_label, TRUE, L"");
+	if(!dbox)
+		return FALSE;
+
+	dbox_refresh(dbox);
+	status_op = dbox_handle(dbox);
+	if(status_op) {
+		status = make_directory(dbox->in->buffer);
+		if(status == EFI_SUCCESS) {
+			panel_cd_to(PANEL, PANEL->cwd);
+			panel_move_cursor(PANEL, line);
+		}
+	}
+
+	redraw();
+	dbox_release(dbox);
 	return TRUE;
 }
 
