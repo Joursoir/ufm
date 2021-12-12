@@ -291,8 +291,7 @@ UINTN EFIAPI wvprintf(struct window *w, CONST CHAR16 *fmt, VA_LIST args)
 	if(!fmt_walker)
 		return 0;
 
-	UnicodeVSPrint(fmt_walker, walker_size, fmt, args);
-	length = StrLen(fmt_walker);
+	length = UnicodeVSPrint(fmt_walker, walker_size, fmt, args);
 	max_length = w->width - x;
 	if(length >= max_length) {
 		length = max_length;
