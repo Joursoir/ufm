@@ -150,6 +150,7 @@ STATIC VOID set_cwd(struct panel_ctx *p, CONST CHAR16 *path)
 	if(path)
 		StrnCatGrow(&p->cwd, NULL, path, 0);
 
+	gEfiShellProtocol->SetCurDir(NULL, p->cwd);
 	whline(p->wcwd, 0, 0, BOXDRAW_HORIZONTAL, p->wcwd->cur_attr, p->wcwd->width);
 	wattrset(p->wcwd, EFI_TEXT_ATTR(EFI_WHITE, EFI_BLACK));
 	mvwprintf(p->wcwd, 0, 0, L" %s ", p->cwd ? p->cwd : L" ");
