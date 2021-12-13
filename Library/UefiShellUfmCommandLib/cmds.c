@@ -94,18 +94,19 @@ EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
 		if(EFI_ERROR(status))
 			return EFI_ACCESS_DENIED;
 
-		temp_name = NULL;
 		StrnCatGrow(&temp_name, &size, src, 0);
 		StrnCatGrow(&temp_name, &size, L"\\*", 0);
 		if(temp_name == NULL)
 			return EFI_OUT_OF_RESOURCES;
 
-		ShellOpenFileMetaArg(temp_name, EFI_FILE_MODE_READ, &list);
-		*temp_name = CHAR_NULL;
-		StrnCatGrow(&temp_name, &size, dest, 0);
-		StrnCatGrow(&temp_name, &size, L"\\", 0);
-		// TODO: copy directory entries
-		ShellCloseFileMetaArg(&list);
+		status = ShellOpenFileMetaArg(temp_name, EFI_FILE_MODE_READ, &list);
+		if(!EFI_ERROR(status)) {
+			*temp_name = CHAR_NULL;
+			StrnCatGrow(&temp_name, &size, dest, 0);
+			StrnCatGrow(&temp_name, &size, L"\\", 0);
+			// TODO: copy directory entries
+			ShellCloseFileMetaArg(&list);
+		}
 		SHELL_FREE_NON_NULL(temp_name);
 		return status;
 	}
