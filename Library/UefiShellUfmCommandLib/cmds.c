@@ -76,6 +76,58 @@ EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node)
 	return status;
 }
 
+EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
+{
+	SHELL_FILE_HANDLE dest_handle = NULL;
+	EFI_SHELL_FILE_INFO *list;
+	EFI_STATUS status;
+	CONST CHAR16 *path_last_item;
+	CHAR16 *temp_name = NULL, *correct_dest = NULL;
+	UINTN size = 0;
+
+	if(StrCmp(src, dest) == 0)
+		return EFI_SUCCESS;
+
+	if(ShellIsDirectory(src) == EFI_SUCCESS) {
+		// move DIRECTORY to DIRECTORY
+		status = ShellCreateDirectory(dest, &dest_handle);
+		if(EFI_ERROR(status))
+			return EFI_ACCESS_DENIED;
+
+		temp_name = NULL;
+		StrnCatGrow(&temp_name, &size, src, 0);
+		StrnCatGrow(&temp_name, &size, L"\\*", 0);
+		if(temp_name == NULL)
+			return EFI_OUT_OF_RESOURCES;
+
+		ShellOpenFileMetaArg(temp_name, EFI_FILE_MODE_READ, &list);
+		*temp_name = CHAR_NULL;
+		StrnCatGrow(&temp_name, &size, dest, 0);
+		StrnCatGrow(&temp_name, &size, L"\\", 0);
+		// TODO: copy directory entries
+		ShellCloseFileMetaArg(&list);
+		SHELL_FREE_NON_NULL(temp_name);
+		return status;
+	}
+
+	StrnCatGrow(&correct_dest, &size, dest, 0);
+	if(ShellIsDirectory(dest) == EFI_SUCCESS) {
+		// move SOURCE to DIRECTORY
+		path_last_item = src;
+		while((temp_name = StrStr(path_last_item, L"\\")))
+			path_last_item = temp_name + 1;
+		ASSERT(path_last_item != NULL);
+
+		// dest would be "dest/(src last item)"
+		StrnCatGrow(&correct_dest, &size, L"\\", 0);
+		StrnCatGrow(&correct_dest, &size, path_last_item, 0);
+	}
+
+	// TODO: copy single file
+	SHELL_FREE_NON_NULL(correct_dest);
+	return status;
+}
+
 EFI_STATUS make_directory(CONST CHAR16 *dir_name)
 {
 	EFI_STATUS status = EFI_SUCCESS;

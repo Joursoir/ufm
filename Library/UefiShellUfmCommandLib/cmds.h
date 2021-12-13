@@ -17,6 +17,19 @@
 EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node);
 
 /*
+ * Copies one file/directory (including subdirectories) to another location.
+ * If destination is a directory, the source is copied to a directory
+ *
+ * NOTE: if destination is a existing file, the source overwrites file
+ *
+ * src: the pointer to source string
+ * dest: the pointer to destination string
+ *
+ * return: unknown
+*/
+EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest);
+
+/*
  * Creates one or more directories.
  *
  * dir_name: the name of a directory or directories to create
