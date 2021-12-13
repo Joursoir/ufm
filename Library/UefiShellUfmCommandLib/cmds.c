@@ -79,7 +79,7 @@ EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node)
 EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
 {
 	SHELL_FILE_HANDLE dest_handle = NULL;
-	EFI_SHELL_FILE_INFO *list;
+	EFI_SHELL_FILE_INFO *list = NULL;
 	EFI_STATUS status;
 	CONST CHAR16 *path_last_item;
 	CHAR16 *temp_name = NULL, *correct_dest = NULL;
