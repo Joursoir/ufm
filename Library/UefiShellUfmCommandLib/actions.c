@@ -24,6 +24,8 @@
 #define UPANEL ((PANEL == LEFT_PANEL) ? RIGHT_PANEL : LEFT_PANEL)
 
 #define FILECOUNT_LENGTH 20
+STATIC CONST CHAR16 cp_title[] = L" Copy ";
+STATIC CONST CHAR16 cp_label[] = L"Copy %u files/directories to:";
 STATIC CONST CHAR16 mv_title[] = L" Move ";
 STATIC CONST CHAR16 mv_label[] = L"Move %u files/directories to:";
 STATIC CONST CHAR16 rm_title[] = L" Delete ";
@@ -127,6 +129,48 @@ BOOLEAN hexedit(VOID)
 
 	shell_exec2(L"hexedit ", file->FullName, &cmd_status);
 	redraw();
+	return TRUE;
+}
+
+BOOLEAN cp(VOID)
+{
+	struct dbox_ctx *dbox;
+	UINTN i, size, line = PANEL->curline;
+	CHAR16 *label;
+	EFI_SHELL_FILE_INFO *file;
+	BOOLEAN status_op;
+
+	if(!PANEL->cwd)
+		return FALSE;
+
+	if(PANEL->marked < 1)
+		return FALSE;
+
+	size = (StrLen(cp_label) + FILECOUNT_LENGTH + 1) * sizeof(CHAR16);
+	label = AllocatePool(size);
+	if(!label)
+		return FALSE;
+
+	UnicodeSPrint(label, size, cp_label, PANEL->marked);
+	dbox = dbox_alloc(fm_ctx.scr, cp_title, label, TRUE, UPANEL->cwd);
+
+	dbox_refresh(dbox);
+	status_op = dbox_handle(dbox);
+	if(status_op) {
+		for(i = 1; i <= PANEL->dirs->len; i++) {
+			if(PANEL->dirs->marked[i-1] == FALSE)
+				continue;
+
+			file = dirl_getn(PANEL->dirs, i);
+			copy_file(file->FullName, dbox->in->buffer); // NOT UPANEL->cwd!!!
+		}
+		panel_cd_to(PANEL, PANEL->cwd);
+		panel_move_cursor(PANEL, (line > PANEL->dirs->len) ? PANEL->dirs->len : line);
+	}
+	
+	redraw();
+	FreePool(label);
+	dbox_release(dbox);
 	return TRUE;
 }
 

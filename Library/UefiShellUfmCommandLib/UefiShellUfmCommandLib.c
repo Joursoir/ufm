@@ -23,7 +23,7 @@ STATIC CONST struct shortcut shortcuts[] = {
 	{ACTION_CMD,     {SCAN_F1,        0x0}, do_nothing, L"1", L"Help"},
 	{ACTION_CMD,     {SCAN_F2,        0x0}, edit, L"2", L"Edit"},
 	{ACTION_CMD,     {SCAN_F3,        0x0}, hexedit, L"3", L"Hex"},
-	{ACTION_CMD,     {SCAN_F4,        0x0}, do_nothing, L"4", L"Copy"},
+	{ACTION_CMD,     {SCAN_F4,        0x0}, cp, L"4", L"Copy"},
 	{ACTION_CMD,     {SCAN_F5,        0x0}, mv, L"5", L"RenMov"},
 	{ACTION_CMD,     {SCAN_F6,        0x0}, mkdir, L"6", L"Mkdir"},
 	{ACTION_CMD,     {SCAN_F7,        0x0}, rm, L"7", L"Rm"},
