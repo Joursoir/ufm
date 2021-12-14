@@ -2,6 +2,7 @@
 #include <Library/DebugLib.h>
 #include <Library/FileHandleLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PcdLib.h>
 
 #include "cmds.h"
 
@@ -76,6 +77,45 @@ EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node)
 	return status;
 }
 
+STATIC EFI_STATUS copy_single_file(CONST CHAR16 *src, CONST CHAR16 *dest)
+{
+	SHELL_FILE_HANDLE src_handle = NULL, dest_handle = NULL;
+	UINTN read_size = PcdGet32(PcdShellFileOperationSize);
+	VOID *buffer;
+	EFI_STATUS status;
+
+	ShellDeleteFileByName(dest);
+
+	status = ShellOpenFileByName(dest, &dest_handle, EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE|EFI_FILE_MODE_CREATE, 0);
+	if(EFI_ERROR(status)) 
+		return EFI_ACCESS_DENIED;
+
+	status = ShellOpenFileByName(src, &src_handle, EFI_FILE_MODE_READ, 0);
+	if(EFI_ERROR(status)) 
+		return EFI_ACCESS_DENIED;
+
+	buffer = AllocateZeroPool(read_size);
+	if(buffer == NULL)
+		return EFI_OUT_OF_RESOURCES;
+
+	while(read_size == PcdGet32(PcdShellFileOperationSize) && !EFI_ERROR(status))
+	{
+		status = ShellReadFile(src_handle, &read_size, buffer);
+		if(EFI_ERROR(status))
+			break;
+
+		status = ShellWriteFile(dest_handle, &read_size, buffer);
+		if(EFI_ERROR(status))
+			break;
+	}
+
+	if(dest_handle != NULL)
+		ShellCloseFile(&dest_handle);
+	if(src_handle != NULL)
+		ShellCloseFile(&src_handle);
+	return status;
+}
+
 EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
 {
 	SHELL_FILE_HANDLE dest_handle = NULL;
@@ -124,7 +164,7 @@ EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
 		StrnCatGrow(&correct_dest, &size, path_last_item, 0);
 	}
 
-	// TODO: copy single file
+	status = copy_single_file(src, correct_dest);
 	SHELL_FREE_NON_NULL(correct_dest);
 	return status;
 }

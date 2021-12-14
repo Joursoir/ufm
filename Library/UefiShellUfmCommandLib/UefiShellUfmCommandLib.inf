@@ -34,6 +34,7 @@
   DevicePathLib
   FileHandleLib
   MemoryAllocationLib
+  PcdLib
   PrintLib
   ShellCommandLib
   ShellLib
@@ -52,3 +53,4 @@
 [FeaturePcd]
 
 [Pcd]
+  gEfiShellPkgTokenSpaceGuid.PcdShellFileOperationSize
