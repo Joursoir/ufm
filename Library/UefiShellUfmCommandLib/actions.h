@@ -25,6 +25,7 @@ BOOLEAN mark(VOID);
 BOOLEAN edit(VOID);
 BOOLEAN hexedit(VOID);
 BOOLEAN mkdir(VOID);
+BOOLEAN rm(VOID);
 BOOLEAN show_filesystems(VOID);
 BOOLEAN do_nothing(VOID);
 BOOLEAN quit(VOID);

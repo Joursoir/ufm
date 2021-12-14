@@ -2,6 +2,7 @@
 #include <Library/DebugLib.h>
 #include <Library/ShellLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/PrintLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
 #include "dir.h"
@@ -22,6 +23,9 @@
 #define RIGHT_PANEL (fm_ctx.right)
 #define UPANEL ((PANEL == LEFT_PANEL) ? RIGHT_PANEL : LEFT_PANEL)
 
+#define FILECOUNT_LENGTH 20
+STATIC CONST CHAR16 rm_title[] = L" Delete ";
+STATIC CONST CHAR16 rm_label[] = L"Delete %u files/directories?";
 STATIC CONST CHAR16 mkdir_title[] = L" Create a new directory ";
 STATIC CONST CHAR16 mkdir_label[] = L"Enter directory name:";
 
@@ -149,6 +153,48 @@ BOOLEAN mkdir(VOID)
 	}
 
 	redraw();
+	dbox_release(dbox);
+	return TRUE;
+}
+
+BOOLEAN rm(VOID)
+{
+	struct dbox_ctx *dbox;
+	UINTN i, size, line = PANEL->curline;
+	CHAR16 *label;
+	EFI_SHELL_FILE_INFO *file;
+	BOOLEAN status_op;
+
+	if(!PANEL->cwd)
+		return FALSE;
+
+	if(PANEL->marked < 1)
+		return FALSE;
+
+	size = (StrLen(rm_label) + FILECOUNT_LENGTH + 1) * sizeof(CHAR16);
+	label = AllocatePool(size);
+	if(!label)
+		return FALSE;
+
+	UnicodeSPrint(label, size, rm_label, PANEL->marked);
+	dbox = dbox_alloc(fm_ctx.scr, rm_title, label, FALSE, L"");
+
+	dbox_refresh(dbox);
+	status_op = dbox_handle(dbox);
+	if(status_op) {
+		for(i = 1; i <= PANEL->dirs->len; i++) {
+			if(PANEL->dirs->marked[i-1] == FALSE)
+				continue;
+
+			file = dirl_getn(PANEL->dirs, i);
+			delete_file(file);
+		}
+		panel_cd_to(PANEL, PANEL->cwd);
+		panel_move_cursor(PANEL, (line > PANEL->dirs->len) ? PANEL->dirs->len : line);
+	}
+	
+	redraw();
+	FreePool(label);
 	dbox_release(dbox);
 	return TRUE;
 }

@@ -26,7 +26,7 @@ STATIC CONST struct shortcut shortcuts[] = {
 	{ACTION_CMD,     {SCAN_F4,        0x0}, do_nothing, L"4", L"Copy"},
 	{ACTION_CMD,     {SCAN_F5,        0x0}, do_nothing, L"5", L"RenMov"},
 	{ACTION_CMD,     {SCAN_F6,        0x0}, mkdir, L"6", L"Mkdir"},
-	{ACTION_CMD,     {SCAN_F7,        0x0}, do_nothing, L"7", L"Rm"},
+	{ACTION_CMD,     {SCAN_F7,        0x0}, rm, L"7", L"Rm"},
 	{ACTION_CMD,     {SCAN_F8,        0x0}, do_nothing, L"8", L""},
 	{ACTION_CMD,     {SCAN_F9,        0x0}, show_filesystems, L"9", L"FSs"},
 	{ACTION_CMD,     {SCAN_F10,       0x0}, quit, L"10", L"Quit"},
