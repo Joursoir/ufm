@@ -44,3 +44,28 @@ ShellPkg/Application/UfmApp/UfmApp.inf
 ```
 UfmCommandLib|Include/Library/UfmCommandLib.h
 ```
+
+## Usage:
+
+```
+Shell> ufm
+```
+
+This example of launching an application is possible if it's integrated in the Shell. In other case, go to the desired file system and run **UfmApp.efi**
+
+The app doesn't currently support command line arguments
+
+### Controls:
+
+There is no mouse support.
+
+Keyboard Inputs:
+
+```
+- UP ARROW / DOWN ARROW: move to the next / prev item or scroll a line up / down
+- TAB: move to the next panel
+- ENTER: follow the current link
+- SPACE: select the file
+- F1-F10: special commands
+```
+
