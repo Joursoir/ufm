@@ -3,6 +3,8 @@
 #include <Library/FileHandleLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
+#include <Library/ShellCommandLib.h>
+#include <Library/SortLib.h>
 
 #include "cmds.h"
 
@@ -23,6 +25,42 @@ STATIC BOOLEAN is_dir_empty(SHELL_FILE_HANDLE FileHandle)
 		}
 	}
 	return ret;
+}
+
+/**
+  String comparison without regard to case for a limited number of characters.
+
+  Analog of StrniCmp in UefiShellLevel2CommandsLib
+**/
+STATIC INTN StrNoCaseCmpN(CONST CHAR16 *src, CONST CHAR16 *target, CONST UINTN cnt)
+{
+	CHAR16 *src_copy, *target_copy;
+	UINTN src_length, target_length;
+	INTN res;
+
+	if(cnt == 0)
+		return 0;
+
+	src_length = StrLen(src);
+	target_length = StrLen(target);
+	src_length = MIN(src_length, cnt);
+	target_length = MIN(target_length, cnt);
+	src_copy = AllocateCopyPool((src_length + 1) * sizeof (CHAR16), src);
+	if(!src_copy)
+		return -1;
+
+	target_copy = AllocateCopyPool((target_length + 1) * sizeof (CHAR16), target);
+	if(!target_copy) {
+		FreePool (src_copy);
+		return -1;
+	}
+
+	src_copy[src_length] = L'\0';
+	target_copy[target_length] = L'\0';
+	res = gUnicodeCollation->StriColl(gUnicodeCollation, src_copy, target_copy);
+	FreePool(src_copy);
+	FreePool(target_copy);
+	return res;
 }
 
 EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node)
@@ -74,6 +112,117 @@ EFI_STATUS delete_file(EFI_SHELL_FILE_INFO *node)
 		node->Handle = NULL;
 	}
 
+	return status;
+}
+
+STATIC EFI_STATUS copy_to_dir(CONST EFI_SHELL_FILE_INFO *list,
+	CONST CHAR16 *dest)
+{
+	CONST EFI_SHELL_FILE_INFO *node;
+	CONST CHAR16 *cwd = ShellGetCurrentDir(NULL);
+	CHAR16 *dest_path = NULL;
+	UINTN new_length = 0, max_length = 0;
+	EFI_STATUS status;
+
+	ASSERT(list != NULL);
+	ASSERT(dest != NULL);
+
+	if(dest[0] == L'\\' || StrStr(dest, L":") == NULL) {
+		if(!cwd)
+			return EFI_INVALID_PARAMETER;
+	}
+
+	status = ShellIsDirectory(dest);
+	if(EFI_ERROR(status))
+		return EFI_INVALID_PARAMETER;
+
+	for(node = (EFI_SHELL_FILE_INFO *)GetFirstNode(&list->Link); 
+		!IsNull(&list->Link, &node->Link);
+		node = (EFI_SHELL_FILE_INFO *)GetNextNode(&list->Link, &node->Link))
+	{
+		if(StrCmp(node->FileName, L".") == 0 || StrCmp(node->FileName, L"..") == 0)
+			continue;
+
+		new_length = StrLen(dest) + StrLen(node->FullName) + 1;
+		new_length += (cwd == NULL) ? 0 : (StrLen(cwd) + 1);
+		if(new_length > max_length)
+			max_length = new_length;
+	}
+
+	dest_path = AllocateZeroPool(max_length * sizeof(CHAR16));
+	if(!dest_path)
+		return EFI_OUT_OF_RESOURCES;
+
+	for(node = (EFI_SHELL_FILE_INFO *)GetFirstNode(&list->Link);
+		!IsNull(&list->Link, &node->Link);
+		node = (EFI_SHELL_FILE_INFO *)GetNextNode(&list->Link, &node->Link))
+	{
+		if(StrCmp(node->FileName, L".") == 0 || StrCmp(node->FileName, L"..") == 0)
+			continue;
+
+		if(dest[0] == L'\\') {
+			StrCpyS(dest_path, max_length, cwd);
+			StrCatS(dest_path, max_length, L"\\");
+			while(PathRemoveLastItem(dest_path));
+			StrCatS(dest_path, max_length, dest+1);
+		}
+		else if(StrStr(dest, L":") == NULL) {
+			StrCpyS(dest_path, max_length, cwd);
+			StrCatS(dest_path, max_length, L"\\");
+
+			if(dest_path[StrLen(dest_path) - 1] != L'\\' && dest[0] != L'\\')
+				StrCatS(dest_path, max_length, L"\\");
+			else if(dest_path[StrLen(dest_path) - 1] == L'\\' && dest[0] == L'\\')
+				((CHAR16*)dest_path)[StrLen(dest_path) - 1] = CHAR_NULL;
+
+			StrCatS(dest_path, max_length, dest);
+
+			if(dest[StrLen(dest) - 1] != L'\\' && node->FileName[0] != L'\\')
+				StrCatS(dest_path, max_length, L"\\");
+			else if(dest[StrLen(dest) - 1] == L'\\' && node->FileName[0] == L'\\')
+				((CHAR16*)dest_path)[StrLen(dest_path) - 1] = CHAR_NULL;
+		}
+		else {
+			StrCpyS(dest_path, max_length, dest);
+
+			if(dest[StrLen(dest) - 1] != L'\\' && node->FileName[0] != L'\\')
+				StrCatS(dest_path, max_length, L"\\");
+			else if(dest[StrLen(dest) - 1] == L'\\' && node->FileName[0] == L'\\')
+				((CHAR16*)dest)[StrLen(dest) - 1] = CHAR_NULL;
+		}
+		StrCatS(dest_path, max_length, node->FileName);
+
+		if(!EFI_ERROR(ShellIsDirectory(node->FullName)) &&
+			!EFI_ERROR(ShellIsDirectory(dest_path)) &&
+			StrNoCaseCmpN(node->FullName, dest_path, StrLen(dest_path)) == 0)
+		{
+			// parent dir
+			status = EFI_INVALID_PARAMETER;
+			break;
+		}
+
+		if(StringNoCaseCompare(&node->FullName, &dest_path) == 0) {
+			// same dir
+			status = EFI_INVALID_PARAMETER;
+			break;
+		}
+
+		if((StrNoCaseCmpN(node->FullName, dest_path, StrLen(node->FullName)) == 0) &&
+			(dest_path[StrLen(node->FullName)] == CHAR_NULL || 
+			dest_path[StrLen(node->FullName)] == L'\\'))
+		{
+			// same dir
+			status = EFI_INVALID_PARAMETER;
+			break;
+		}
+
+		PathCleanUpDirectories(dest_path);
+		status = copy_file(node->FullName, dest_path);
+		if(status != EFI_SUCCESS)
+			break;
+	}
+
+	SHELL_FREE_NON_NULL(dest_path);
 	return status;
 }
 
@@ -144,7 +293,7 @@ EFI_STATUS copy_file(CONST CHAR16 *src, CONST CHAR16 *dest)
 			*temp_name = CHAR_NULL;
 			StrnCatGrow(&temp_name, &size, dest, 0);
 			StrnCatGrow(&temp_name, &size, L"\\", 0);
-			// TODO: copy directory entries
+			status = copy_to_dir(list, temp_name);
 			ShellCloseFileMetaArg(&list);
 		}
 		SHELL_FREE_NON_NULL(temp_name);

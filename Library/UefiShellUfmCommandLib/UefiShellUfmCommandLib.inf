@@ -38,6 +38,7 @@
   PrintLib
   ShellCommandLib
   ShellLib
+  SortLib
   UefiApplicationEntryPoint
   UefiBootServicesTableLib
   UefiLib
