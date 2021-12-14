@@ -24,6 +24,7 @@ BOOLEAN execute(VOID);
 BOOLEAN mark(VOID);
 BOOLEAN edit(VOID);
 BOOLEAN hexedit(VOID);
+BOOLEAN mv(VOID);
 BOOLEAN mkdir(VOID);
 BOOLEAN rm(VOID);
 BOOLEAN show_filesystems(VOID);
