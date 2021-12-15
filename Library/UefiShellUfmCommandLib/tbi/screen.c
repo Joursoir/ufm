@@ -39,5 +39,6 @@ VOID screen_clear(struct screen *scr)
 {
 	ASSERT(scr != NULL);
 
+	scr->stdout->SetAttribute(scr->stdout, scr->attr);
 	scr->stdout->ClearScreen(scr->stdout);
 }
