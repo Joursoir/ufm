@@ -76,7 +76,7 @@ VOID input_handle_char(struct widget_input *in, EFI_INPUT_KEY key)
 		case 0x0:
 			break;
 		case CHAR_BACKSPACE: {
-			if(in->buf_len == 0)
+			if(in->buf_len == 0 || in->point == 0)
 				break;
 
 			for(i = in->point; i < in->buf_len; i++)
