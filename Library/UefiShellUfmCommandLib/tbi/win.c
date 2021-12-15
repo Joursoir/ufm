@@ -344,5 +344,6 @@ VOID wrefresh(struct window *w)
 		}
 	}
 
-	stdout->SetAttribute(stdout, w->scr->attr);
+	stdout->SetCursorPosition(stdout, w->begx + w->curx, w->begy + w->cury);
+	stdout->SetAttribute(stdout, w->attr[w->cury][w->curx]);
 }
