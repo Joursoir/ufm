@@ -8,6 +8,7 @@ struct widget_input *input_alloc(struct screen *scr, INT32 x, INT32 y,
 	INT32 width, INT32 attr, CONST CHAR16 *def_text)
 {
 	struct widget_input *in;
+	UINTN text_length;
 
 	ASSERT(scr != NULL);
 
@@ -24,10 +25,11 @@ struct widget_input *input_alloc(struct screen *scr, INT32 x, INT32 y,
 	whline(in->win, 0, 0, 0, attr, 0);
 	mvwprintf(in->win, 0, 0, def_text);
 
-	in->point = 0;
+	text_length = StrLen(def_text);
+	in->point = text_length > width ? width : text_length;
 	in->max_size = width;
-	in->buf_len = 0;
-	in->buffer = AllocateZeroPool((in->max_size + 1) * sizeof(CHAR16));
+	in->buf_len = in->point;
+	in->buffer = AllocateCopyPool((in->max_size + 1) * sizeof(CHAR16), def_text);
 	if(!in->buffer) {
 		input_release(in);
 		return NULL;
