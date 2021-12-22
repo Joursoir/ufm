@@ -112,6 +112,10 @@ SHELL_STATUS EFIAPI ShellCommandRunUFM(
 	SHELL_STATUS status = SHELL_LOAD_ERROR;
 	BOOLEAN res;
 
+	// Check for UEFI Shell 2.0 protocol
+	if(!gEfiShellProtocol)
+		return SHELL_UNSUPPORTED;
+
 	res = prepare_context();
 	if(res) {
 		do_ec();
