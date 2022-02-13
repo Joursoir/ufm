@@ -1,7 +1,15 @@
 # UEFI File Manager (UFM)
-A dual pane file manager with a text based user interface for UEFI environment. Distributed under the BSD-2-Clause Plus Patent License.
+A dual pane file manager with a text based user interface for UEFI Shell environment (requires v2.0 or higher). The application is based on the [TianoCore EDK II](https://www.tianocore.org/) development environment. Distributed under the BSD-2-Clause Plus Patent License.
 
-_Requires EFI Shell v2.0 and above for correct work_
+
+## Features:
+
+* Support all available text-modes on standard output
+* Work with devices that support the Simple File System Protocol
+* Execute an application
+* Use internal `edit` and `hexedit` editors
+* Copy, create, move/rename, remove files/directories
+
 
 ## Installation:
 1) Move all files from Library to ShellPkg/Library
@@ -30,11 +38,13 @@ ShellPkg/Application/Shell/Shell.inf {
 2) Add the following lines to ShellPkg/ShellPkg.dsc:
 
 **Section LibraryClasses.common:**
+
 ```
 UfmCommandLib|ShellPkg/Library/UefiShellUfmCommandLib/UefiShellUfmCommandLib.inf
 ```
 
 **Section Components:**
+
 ```
 ShellPkg/Application/UfmApp/UfmApp.inf
 ```
@@ -44,6 +54,7 @@ ShellPkg/Application/UfmApp/UfmApp.inf
 ```
 UfmCommandLib|Include/Library/UfmCommandLib.h
 ```
+
 
 ## Usage:
 
@@ -69,8 +80,16 @@ Keyboard Inputs:
 - F1-F10: special commands
 ```
 
+
 ## Screenshots:
 
 ![](ufm-screenshot.png)
 
 ![](ufm-screenshot2.png)
+
+
+## Useful resources & documentation:
+
+[UEFI Shell Specification Version 2.2](https://uefi.org/sites/default/files/resources/UEFI_Shell_2_2.pdf)
+
+[EDK II Documentation](https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documentation)
