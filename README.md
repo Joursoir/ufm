@@ -58,7 +58,7 @@ UfmCommandLib|Include/Library/UfmCommandLib.h
 
 ## Binary release
 
-Compiling programs for UEFI is not always convenient, especially for an application. Therefore, precompiled application is distributed. You can find binaries (for x86_64) at [joursoir.net/binaries/ufm](http://joursoir.net/binaries/ufm/).
+Compiling programs for UEFI is not always convenient, especially for an application. Therefore, precompiled application is distributed. You can find binaries (for x86_64) at [joursoir.net/storage/binaries/ufm](http://joursoir.net/storage/binaries/ufm/).
 
 
 ## Usage:
